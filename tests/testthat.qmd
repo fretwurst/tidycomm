@@ -1,0 +1,101 @@
+---
+title: "Tidycomm-tests"
+author: "Test Bär"
+
+format: 
+  pdf:
+    documentclass: scrartcl
+    papersize: a4
+    toc: true
+    number-sections: true
+    colorlinks: true
+  html: default 
+
+lang: de-CH
+editor: source
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| warings: false
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  echo = FALSE,
+  fig.width = 7,
+  fig.align = "center",
+  fig.pos = "H",
+  out.width = "85%",
+  fig.show = 'hold',
+  fig.subcap = TRUE,
+  eval = TRUE, 
+  warning = FALSE
+)
+
+design <- design_uzh
+
+pacman::p_load(tidyverse, viridisLite, viridis, tidycomm)
+```
+
+```{r}
+#| label: Analyseobjekt
+#| include: false
+
+DATEN <- tidycomm::WoJ
+
+model <- lm(autonomy_selection ~ work_experience + trust_government, data = DATEN)
+
+reg_tab <- tidycomm::regress(model, 
+                    check_multicollinearity = TRUE, 
+                    check_independenterrors = TRUE, 
+                    check_homoscedasticity = TRUE) 
+
+
+```
+
+# Regressionsanalyse mit den Daten "World of Journalism"
+
+Es ist immer ratsam sich zunächst die Regressionskoeffizienten genau anzuschauen, was mit einer Tabelle praktisch am besten geht, wie sie in @tbl-tab1 einsehbar ist.
+
+```{r}
+
+r |> 
+  knit_regress_table()
+```
+
+## Teiltabelle
+
+
+## Analyse der Voraussetzungen
+
+In @fig-reslev ist gut zu erkennen.
+
+```{r}
+#| label: fig-reslev
+#| fig.cap: residualsleverage plot
+
+r |> 
+  tidycomm::visualize(which = "reslev")
+```
+
+Schaut man sich darüber hinaus @fig-scaleloc im schönen UZH-Design an, wird einem alles klar.
+
+```{r}
+#| label: fig-scaleloc
+#| fig.cap: scalelocation plot
+
+r |> 
+  tidycomm::visualize(which = "scaloc", .design = design_uzh())
+```
+
+Nicht zuletzt sollte man sich die Residuen in Abhängigkeit der geschätzten Werte ansehen, was im schönen Viridis-Design in @fig-resfit durchaus möglich ist, auch wenn das dunkle Lila nicht gut zu erkennen ist.
+
+```{r}
+#| label: fig-resfit
+#| fig.cap: residualsleverage plot
+
+
+r |> 
+  tidycomm::visualize(which = "resfit", .design = design_viridis())
+```

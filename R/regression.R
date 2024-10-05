@@ -20,6 +20,7 @@
 #'   need to be numeric
 #' @param check_homoscedasticity if set, homoscedasticity is being checked
 #'   using a Breusch-Pagan test
+#' @param formula if exist, the lm-formula is used
 #'
 #' @return a [tdcmm] model
 #'
@@ -28,6 +29,7 @@
 #' WoJ %>% regress(autonomy_selection, work_experience, trust_government)
 #'
 #' @export
+
 regress <- function(data,
                     dependent_var,
                     ...,
@@ -35,11 +37,27 @@ regress <- function(data,
                     check_multicollinearity = FALSE,
                     check_homoscedasticity = FALSE) {
 
-  yvar <- expr({{ dependent_var }})
-  xvars <- grab_vars(data, enquos(...), alternative = "none")
+  # Check if 'data' is an lm model
+  if (inherits(data, "lm")) {
+    # Extract the formula and the data from the lm model
+    model <- data
+    model_formula <- stats::formula(model)  # Extract the formula from the model
+    data <- dplyr::as_tibble(model$model)  # Extract the data from the model
+    yvar_string <- all.vars(model_formula)[1]  # Dependent variable
+    xvars_string <- all.vars(model_formula)[-1]  # Independent variables
 
-  yvar_string <- as_label(yvar)
-  xvars_string <- purrr::map_chr(xvars, as_label)
+    # Create dummy placeholders for yvar and xvars to ensure compatibility
+    yvar <- rlang::sym(yvar_string)  # Convert yvar_string back to symbol
+    xvars <- rlang::syms(xvars_string)  # Convert xvars_string back to symbols
+
+  } else {
+    # Original processing for when data and variables are provided separately
+    yvar <- expr({{ dependent_var }})
+    xvars <- grab_vars(data, enquos(...), alternative = "none")
+
+    yvar_string <- as_label(yvar)  # Convert dependent variable to string
+    xvars_string <- purrr::map_chr(xvars, as_label)  # Convert independent variables to string
+  }
 
   # basic checks
   if (length(xvars) == 0) {
@@ -88,14 +106,25 @@ regress <- function(data,
                                       yvar_string,
                                       paste(xvars_string,
                                             collapse = " + ")))
+
   model <- stats::lm(model_formula, data)
+
+ # model_std <- datawizard::standardize(model)
+
   model_summary <- summary(model)
+#  model_std_summary <- summary(model_std)
+
   model_tibble <-
     tibble::tibble(
       Variable = dimnames(model_summary$coefficients)[[1]],
       B = model_summary$coefficients[,1],
-      StdErr = model_summary$coefficients[,2],
+      `SE B` = model_summary$coefficients[,2],
+      LL = stats::confint(model)[,1],
+      UL = stats::confint(model)[,2],
       beta = lm.beta::lm.beta(model)$standardized.coefficients,
+ #     beta = model_std_summary$coefficients[,1],
+      # LL_std = confint(model_std)[,1],
+      # UL_std = confint(model_std)[,2],
       t = model_summary$coefficients[,3],
       p = model_summary$coefficients[,4]
     )
@@ -127,7 +156,7 @@ regress <- function(data,
         model_tibble <- model_tibble %>%
           dplyr::bind_cols(tibble::tibble(VIF = c(NA,
                                                   check_vif),
-                                          tolerance = c(NA,
+                                          TOL = c(NA,
                                                         1/check_vif)))
         model_checks[['multicollinearity']] <- check_vif
       }
@@ -145,7 +174,7 @@ regress <- function(data,
   }
   model_checks[['factors']] <- checks_factors
 
-  # return
+  # return ----
   return(new_tdcmm_rgrssn(
     new_tdcmm(model_tibble,
               func = "regress",
