@@ -40,7 +40,10 @@ reference:
   - title: "Visualization"
     contents:
       - visualize
+      - knit_regression
       - design_lmu
+      - design_uzh
+      - design_viridis
       - design_gray
       - design_grey
   - title: "Sample data"

@@ -133,6 +133,7 @@ tab_knit <- tab_format |>
 ## @family tdcmm visualize
 ##
 ## @keywords internal
+
 visualize_regress_sbci <- function(x, design = design_uzh()) {
 
   model <- model(x)
@@ -181,8 +182,7 @@ visualize_regress_sbci <- function(x, design = design_uzh()) {
       panel.grid.minor = element_blank(),   # Entferne alle kleinen Gitternetzlinien
       axis.line.x = element_line(size = .2)  # Zeichne eine dickere x-Achsenlinie bei 0
     ) +
-    xlim(-.2, .3) |>
-    geom_vline(xintercept = .1002557, linetype = "solid", color = design$main_colors[6], size = .1)
+    xlim(-1, 1)
 
   return(sbci)
 }
