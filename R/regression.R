@@ -109,27 +109,19 @@ regress <- function(data,
 
   model <- stats::lm(model_formula, data)
 
- # model_std <- datawizard::standardize(model)
-
   model_summary <- summary(model)
-#  model_std_summary <- summary(model_std)
 
   model_tibble <-
     tibble::tibble(
       Variable = dimnames(model_summary$coefficients)[[1]],
       B = model_summary$coefficients[,1],
-      `SE B` = model_summary$coefficients[,2],
-      LL = stats::confint(model)[,1],
-      UL = stats::confint(model)[,2],
+      StdErr = model_summary$coefficients[,2],
       beta = lm.beta::lm.beta(model)$standardized.coefficients,
- #     beta = model_std_summary$coefficients[,1],
-      # LL_std = confint(model_std)[,1],
-      # UL_std = confint(model_std)[,2],
       t = model_summary$coefficients[,3],
       p = model_summary$coefficients[,4]
     )
 
-  # checks
+    # checks
   model_checks <- list()
 
   if (check_independenterrors) {
