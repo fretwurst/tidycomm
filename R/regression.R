@@ -585,8 +585,7 @@ visualize_regress_sbci <- function(x, design = design_uzh()) {
       panel.grid.major = element_blank(),   # Entferne alle großen Gitternetzlinien
       panel.grid.minor = element_blank(),   # Entferne alle kleinen Gitternetzlinien
       axis.line.x = element_line(size = .2)  # Zeichne eine dickere x-Achsenlinie bei 0
-    ) +
-    xlim(-1, 1)
+    )
 
   return(sbci)
 }

@@ -63,8 +63,8 @@ reg_tab |>
 ```
 
 ```{r}
-reg_tab |> 
-  visualize(which = "sbci")
+reg_tab |>
+  visualize_regress_sbci() # besser wäre visualize(which = 'sbci')
 ```
 
 
