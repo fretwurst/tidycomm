@@ -59,12 +59,12 @@ model <- lm(autonomy_selection ~ work_experience + trust_government + ethics_1 +
 reg_tab <- tidycomm::regress(model, 
                     check_multicollinearity = TRUE) 
 reg_tab |> 
-  knit_regress_table() 
+  tidycomm::knit_regress_table() 
 ```
 
 ```{r}
 reg_tab |>
-  visualize_regress_sbci() # besser wäre visualize(which = 'sbci')
+  visualize_regress_sbci() # besser wäre visualize(which = 'sbci') 
 ```
 
 

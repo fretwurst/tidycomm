@@ -138,51 +138,76 @@ visualize_regress_sbci <- function(x, design = design_uzh()) {
 
   model <- model(x)
 
+  # Berechne die Standardabweichungen
   SDs <- model$model |>
     dplyr::summarise(across(everything(), ~sd(.x, na.rm = TRUE))) |>
     tidyr::pivot_longer(cols = everything(), names_to = "Variable", values_to = "SD")
 
-  sd_Y <- SDs[1,2] |>
+  sd_Y <- SDs[1, 2] |>
     dplyr::pull()
 
   model_tibble <- x
 
+  # Füge SD und andere benötigte Variablen hinzu und berechne betas und Konfidenzintervalle
   model_tibble <- model_tibble |>
     dplyr::left_join(SDs, by = "Variable") |>
-    dplyr::mutate(beta = B * SD/sd_Y,
-                  LL = stats::confint(model)[,1],
-                  UL = stats::confint(model)[,2],
-                  beta_LL = LL * SD/sd_Y,
-                  beta_UL = UL * SD/sd_Y,
-                  beta_LL_compare = stats::confint(model, level = .9)[,1]  * SD/sd_Y,
-                  beta_UL_compare = stats::confint(model, level = .9)[,2]  * SD/sd_Y) |>
-    dplyr::select(dplyr::any_of(c('Variable',
-                                  'B', 'StdErr', 'LL', 'UL',
-                                  'beta', 'beta_LL', 'beta_UL',
-                                  'beta_LL_compare', 'beta_UL_compare',
-                                  't', 'p',
-                                  'TOL', 'VIF')))
-  sbci <- model_tibble  |>
+    dplyr::mutate(beta = B * SD / sd_Y,
+                  LL = stats::confint(model)[, 1],
+                  UL = stats::confint(model)[, 2],
+                  beta_LL = LL * SD / sd_Y,
+                  beta_UL = UL * SD / sd_Y,
+                  beta_LL_compare = stats::confint(model, level = .9)[, 1] * SD / sd_Y,
+                  beta_UL_compare = stats::confint(model, level = .9)[, 2] * SD / sd_Y) |>
+    dplyr::select(dplyr::any_of(c('Variable', 'B', 'StdErr', 'LL', 'UL', 'beta', 'beta_LL', 'beta_UL',
+                                  'beta_LL_compare', 'beta_UL_compare', 't', 'p', 'TOL', 'VIF')))
+
+  # Setze die Variable-Spalte als Faktor, basierend auf der Reihenfolge in model_tibble und drehe die Reihenfolge um
+  model_tibble <- model_tibble |>
+    dplyr::mutate(Variable = factor(Variable, levels = rev(Variable)))  # Sortiere umgekehrt für die korrekte Reihenfolge
+
+  # Erzeuge das Diagramm
+  sbci <- model_tibble |>
     filter(!is.na(beta)) |>
     ggplot(aes(y = Variable, x = beta)) +
-    # Dicke Linie für die Vergleichs-CIs (comp)
-    geom_segment(aes(x = beta_LL_compare, xend = beta_UL_compare, y = Variable, yend = Variable),
-                 color = design$main_colors[4] , size = 4, alpha = 1) +
+    geom_segment(aes(x = beta_LL_compare,
+                     xend = beta_UL_compare,
+                     y = Variable,
+                     yend = Variable,
+                     color = "CIs for BETA comparison"),
+                 size = 4,
+                 alpha = 1) +
     # Dünne Linie für die normalen CIs
-    geom_segment(aes(x = beta_LL, xend = beta_UL, y = Variable, yend = Variable),
-                 color = design$main_colors[6], size = 0.8, alpha = 1) +
-    # Vertikaler Strich für den Beta-Wert
-    geom_text(aes(x = beta, y = Variable, label = "I"), color = design$main_color_1, size = 6) +
-    geom_vline(xintercept = 0, linetype = "dotted", color = "grey", size = .8) +
+    geom_segment(aes(x = beta_LL,
+                     xend = beta_UL,
+                     y = Variable,
+                     yend = Variable,
+                     color = "CIs for point comparison"),
+                 size = 0.8,
+                 alpha = 1) +
+    # Verwende geom_point, um das "I" als Punkt anzuzeigen
+    geom_point(aes(x = beta, y = Variable, color = "Beta-Value"),
+               shape = "|", size = 5) +  # Hier wird das "I" als Punkt verwendet
+    geom_vline(aes(xintercept = 0),
+               color = "grey",
+               linetype = "dotted",
+               size = .8) +
     # Achsenbeschriftungen
-    labs(title = "Beta Coefficients with Confidence Intervals", x = "Beta", y = "") +
+    labs(title = "Beta Coefficients with Confidence Intervals",
+         x = "Beta",
+         y = "",
+         color = "Legend") +
+    scale_color_manual(values = c(
+      "CIs for BETA comparison" = design$main_colors[4],
+      "CIs for point comparison" = design$main_colors[6],
+      "Beta-Value" = design$main_color_1,
+      "Schwellenwert" = design$main_colors[6]
+    )) +
     theme_minimal() +
     theme(
       panel.grid.major = element_blank(),   # Entferne alle großen Gitternetzlinien
       panel.grid.minor = element_blank(),   # Entferne alle kleinen Gitternetzlinien
-      axis.line.x = element_line(size = .2)  # Zeichne eine dickere x-Achsenlinie bei 0
+      legend.position = "bottom"
     )
 
   return(sbci)
 }
-
