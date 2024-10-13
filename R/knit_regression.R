@@ -122,16 +122,15 @@ tab_knit <- tab_format |>
   return(tab_knit)
 }
 
-
-## Visualize swimming BETA confidence intervals.
-## Useful to compare BETAs and
+## Visualize swimming BETA confidence intervals
+## Usefull for comparing BETAs and BETAs vs points like 0
 ##
 ## @param x a [tdcmm] model
 ##
 ## @return a [ggplot2] object
 ##
 ## @family tdcmm visualize
-##
+#
 ## @keywords internal
 
 visualize_regress_sbci <- function(x, design = design_uzh()) {
