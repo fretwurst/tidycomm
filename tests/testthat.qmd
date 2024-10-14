@@ -72,10 +72,7 @@ reg_tab |>
 
 ```{r}
 reg_tab |>
-  visualize(which = 'sbci', 
-            #.design = design_lmu(),
-            #.design = tidycomm::design_uzh()
-            ) 
+  visualize(which = 'sbci') 
 ```
 
 

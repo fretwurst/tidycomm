@@ -133,15 +133,21 @@ tab_knit <- tab_format |>
 #
 ## @keywords internal
 
-visualize_regress_sbci <- function(x, .design = NULL){
+visualize_regress_sbci <- function(x,
+                                   .design = NULL,
+                                   title = NULL){
 
-if(!is.null(.design)){
-  design <- .design
-} else if(!is.null(getOption("design"))){
-  design <- getOption("design")
-} else {
-  design <- tidycomm::design_viridis()
-}
+  if(!is.null(.design)){
+    design <- .design
+  } else if(!is.null(getOption("design"))){
+    design <- getOption("design")
+  } else {
+    design <- tidycomm::design_viridis()
+  }
+
+  if(is.null(NULL)){
+    title = "Beta Coefficients with Confidence Intervals"
+  }
 
   model <- model(x)
 
@@ -199,7 +205,7 @@ if(!is.null(.design)){
                linetype = "dotted",
                size = .8) +
     # Achsenbeschriftungen
-    labs(title = "Beta Coefficients with Confidence Intervals",
+    labs(title = title,
          x = "Beta",
          y = "",
          color = "Legend") +
