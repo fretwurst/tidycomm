@@ -23,6 +23,8 @@ editor: source
 #| echo: false
 #| warings: false
 
+pacman::p_load(tidyverse, viridisLite, viridis, tidycomm)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   echo = FALSE,
@@ -36,7 +38,13 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
-pacman::p_load(tidyverse, viridisLite, viridis, tidycomm)
+options(
+  dplyr.summarise.inform = FALSE,
+  design = design_uzh(),
+  pillar.bold = TRUE,
+  knitr.kable.NA = '---',
+  width = 77 # 80 - 3 for #> comment
+)
 ```
 
 ```{r}
@@ -64,7 +72,10 @@ reg_tab |>
 
 ```{r}
 reg_tab |>
-  visualize_regress_sbci() # besser wäre visualize(which = 'sbci') 
+  visualize(which = 'sbci', 
+            #.design = design_lmu(),
+            #.design = tidycomm::design_uzh()
+            ) 
 ```
 
 

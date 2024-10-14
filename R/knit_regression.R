@@ -133,7 +133,15 @@ tab_knit <- tab_format |>
 #
 ## @keywords internal
 
-visualize_regress_sbci <- function(x, design = design_uzh()) {
+visualize_regress_sbci <- function(x, .design = NULL){
+
+if(!is.null(.design)){
+  design <- .design
+} else if(!is.null(getOption("design"))){
+  design <- getOption("design")
+} else {
+  design <- tidycomm::design_viridis()
+}
 
   model <- model(x)
 
@@ -196,10 +204,9 @@ visualize_regress_sbci <- function(x, design = design_uzh()) {
          y = "",
          color = "Legend") +
     scale_color_manual(values = c(
-      "CIs for BETA comparison" = design$main_colors[4],
-      "CIs for point comparison" = design$main_colors[6],
       "Beta-Value" = design$main_color_1,
-      "Schwellenwert" = design$main_colors[6]
+      "CIs for BETA comparison" = design$main_colors[2],
+      "CIs for point comparison" = design$main_colors[3]
     )) +
     theme_minimal() +
     theme(

@@ -191,7 +191,16 @@ regress <- function(data,
 visualize.tdcmm_rgrssn <- function(x,
                                    which = "jitter",
                                    ...,
-                                   .design = design_lmu()) {
+                                   .design = NULL) {
+
+  if(!is.null(.design)){
+    .design <- .design
+  } else if(!is.null(getOption("design"))){
+    .design <- getOption("design")
+  } else {
+    .design <- tidycomm::design_lmu()
+  }
+
   if (attr(x, "func") == "regress") {
     which <- tolower(which)
     if (which == "correlogram") {
