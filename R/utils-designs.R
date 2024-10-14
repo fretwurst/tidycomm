@@ -63,11 +63,11 @@ design_lmu <- function() {
 design_uzh <- function() {
   return(list(main_color_1 = "#0028A5",
               main_colors = c("#0028A5",
-                              "#BACBFF",
-                              "#4AC9E3",
                               "#A5D233",
-                              "#FFC845",
                               "#FC4C02",
+                              "#4AC9E3",
+                              "#FFC845",
+                              "#BACBFF",
                               "#BF0D3E",
                               "#7596FF",
                               "#B7E9F4",
@@ -114,19 +114,20 @@ design_uzh <- function() {
 #' for all lines that act as comparative lines, and a [ggplot2] `theme`
 #' @export
 design_viridis <- function() {
-  return(list(main_color_1 = "#51C56AFF",
+  return(list(main_color_1 =  "#51C56AFF",
               main_colors = c("#440154FF",
-                              "#482173FF",
-                              "#433E85FF",
-                              "#38598CFF",
-                              "#2D708EFF",
-                              "#25858EFF",
-                              "#1E9B8AFF",
-                              "#2BB07FFF",
-                              "#51C56AFF",
-                              "#85D54AFF",
                               "#C2DF23FF",
-                              "#FDE725FF"),
+                              "#433E85FF",
+                              "#FDE725FF",
+                              "#38598CFF",
+                              "#85D54AFF",
+                              "#2D708EFF",
+                              "#2BB07FFF",
+                              "#25858EFF",
+                              "#1E9B8AFF"
+                             # "#51C56AFF",  is main_color_1
+
+),
               main_contrast_1 = "#FFFFFF",
               main_contrasts = c("#FFFFFF",
                                  "#FFFFFF",

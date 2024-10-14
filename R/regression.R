@@ -183,7 +183,7 @@ regress <- function(data,
 
 #' @param which string to specify type of regression visualization. One of
 #' "jitter" (default), "alpha", "correlogram", "residualsfitted" (or "resfit"),
-#' "pp", "qq", "scalelocation" (or "scaloc"), "residualsleverage" (or "reslev").
+#' "pp", "qq", "scalelocation" (or "scaloc"), "residualsleverage" (or "reslev"), "sbci".
 #' See below for details.
 #'
 #' @rdname visualize
@@ -191,7 +191,16 @@ regress <- function(data,
 visualize.tdcmm_rgrssn <- function(x,
                                    which = "jitter",
                                    ...,
-                                   .design = design_lmu()) {
+                                   .design = NULL) {
+
+  if(!is.null(.design)){
+    .design <- .design
+  } else if(!is.null(getOption("design"))){
+    .design <- getOption("design")
+  } else {
+    .design <- tidycomm::design_lmu()
+  }
+
   if (attr(x, "func") == "regress") {
     which <- tolower(which)
     if (which == "correlogram") {
@@ -217,6 +226,7 @@ visualize.tdcmm_rgrssn <- function(x,
     }
     if (!which %in% c("jitter", "alpha")) {
       warning(glue('which must be one of "jitter", "alpha", "correlogram", ',
+                   '"sbci",',
                    '"residualsfitted" (or "resfit"), "pp", "qq", ',
                    '"scalelocation" (or "scaloc"), ',
                    'or "residualsleverage" (or "reslev"). Since none was ',
@@ -536,6 +546,7 @@ visualize_regress_reslev <- function(x, design = design_lmu()) {
                                 n.breaks = 8) +
     design$theme(panel.grid = ggplot2::element_blank())
 }
+
 
 # Constructors ----
 

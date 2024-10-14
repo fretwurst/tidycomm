@@ -23,6 +23,8 @@ editor: source
 #| echo: false
 #| warings: false
 
+pacman::p_load(tidyverse, viridisLite, viridis, tidycomm)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   echo = FALSE,
@@ -36,7 +38,13 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
-pacman::p_load(tidyverse, viridisLite, viridis, tidycomm)
+options(
+  dplyr.summarise.inform = FALSE,
+  design = design_uzh(),
+  pillar.bold = TRUE,
+  knitr.kable.NA = '---',
+  width = 77 # 80 - 3 for #> comment
+)
 ```
 
 ```{r}
@@ -59,12 +67,15 @@ model <- lm(autonomy_selection ~ work_experience + trust_government + ethics_1 +
 reg_tab <- tidycomm::regress(model, 
                     check_multicollinearity = TRUE) 
 reg_tab |> 
-  knit_regress_table() 
+  tidycomm::knit_regress_table() 
 ```
 
 ```{r}
-reg_tab |> 
-  visualize(which = "sbci")
+reg_tab |>
+  visualize(which = 'sbci', 
+            #.design = design_lmu(),
+            #.design = tidycomm::design_uzh()
+            ) 
 ```
 
 
