@@ -9,10 +9,10 @@
 #
 #' @export
 knit_regress_table <- function(x,
-                                    digits = 2,
-                                    cap = NULL
+                               digits = 2,
+                               CIs = TRUE,
+                               cap = NULL
                                ) {
-
   model <- model(x)
 
   SDs <- model$model |>
@@ -24,6 +24,7 @@ knit_regress_table <- function(x,
 
   model_tibble <- x
 
+  if (CIs == TRUE){
   model_tibble <- model_tibble |>
     dplyr::left_join(SDs, by = "Variable") |>
     dplyr::mutate(beta = B * SD/sd_Y,
@@ -36,7 +37,7 @@ knit_regress_table <- function(x,
                            'B', 'StdErr', 'LL', 'UL',
                            'beta', 'beta_LL', 'beta_UL',
                            't', 'p',
-                           'TOL', 'VIF')))
+                           'TOL', 'VIF')))}
 
   model_summary <- summary(model)
 
@@ -72,7 +73,8 @@ knit_regress_table <- function(x,
   tab_format <- tab |>
     select(dplyr::any_of(c('Variable',
                     'B', 'StdErr', 'LL', 'UL',
-                    'beta', 'beta_LL', 'beta_UL',
+                    'beta',
+       #            'beta_LL', 'beta_UL',
        #             'beta_LL_compare', 'beta_UL_compare',
                     't', 'p',
                     'TOL', 'VIF'))) |>
@@ -85,43 +87,60 @@ knit_regress_table <- function(x,
     ) |>
     dplyr::mutate(dplyr::across(dplyr::any_of("VIF"), as.character))
 
-tab_knit <- tab_format |>
+  tab_knit <- tab_format |>
     gt::gt() |>
     gt::cols_align(align = ("right"),
                    columns = -1) |>
     gt::tab_footnote(quality_notes) |>
+    gt::tab_options(
+      table.width = gt::pct(80)) |>
     gt::tab_spanner(label = "unstd.",
                     columns =  c("B",
                                  "StdErr",
                                  starts_with("LL"),
                                  starts_with("UL")
-                                 )) |>
+                    )) |>
     gt::tab_spanner(label = "std.",
                     columns = c("beta",
-                                "beta_LL",
-                                "beta_UL")) |>
+                                starts_with("beta_LL"),
+                                starts_with("beta_UL"))) |>
     gt::tab_spanner(label = "sig.",
                     columns = c("t", "p")) |>
     gt::tab_spanner(label = "multicoll.",
                     columns = c(starts_with("TOL"),
                                 starts_with("VIF"))) |>
+    gt::sub_missing() |>
     gt::cols_label(StdErr = "SE B",
-                   LL = "CI[LL",
-                   UL = "B UL]",
-                   beta = "B*",
-                   beta_LL = "CI[LL",
-                   beta_UL = "B* UL]") |>
-    gt::sub_missing()
+                   beta = "B*")
 
-  if (knitr::pandoc_to("docx")){
+  if(CIs == TRUE){
+  tab_knit <-  tab_knit |>
+    gt::cols_label(LL = "LL",
+                   UL = "UL",
+      #            beta_LL = "LL",
+      #            beta_UL = "UL"
+                   )
+
+  }
+
+  if (knitr::is_html_output() |
+      knitr::is_latex_output() |
+      interactive() # if interactive in R-Studio
+      ){
+
+  return(tab_knit)
+
+  } else if (knitr::pandoc_to("docx")){
 
   tab_knit <- tab_knit |>
     gt::as_raw_html()
-  }
 
   return(tab_knit)
-}
 
+  } else {
+ return(x)
+  }
+}
 ## Visualize swimming BETA confidence intervals
 ## Usefull for comparing BETAs and BETAs vs points like 0
 ##

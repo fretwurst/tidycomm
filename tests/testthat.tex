@@ -192,31 +192,40 @@ anzuschauen, was mit einer Tabelle praktisch am besten geht, wie sie in
 Tabelle~\ref{tbl-tab1} einsehbar ist.
 
 \begingroup
-\fontsize{12.0pt}{14.4pt}\selectfont
+\setlength\LTleft{0.1\linewidth}
+\setlength\LTright{0.1\linewidth}\fontsize{12.0pt}{14.4pt}\selectfont
 \setlength{\LTpost}{0mm}
 
-\begin{longtable}{lrrrrrrrrr}
+\begin{longtable}{@{\extracolsep{\fill}}lrrrrrrr}
 
 \caption{\label{tbl-tab1}Regression auf autonome Auswahl}
 
 \tabularnewline
 
 \toprule
- & \multicolumn{4}{c}{unstd.} & std. & \multicolumn{2}{c}{sig.} & \multicolumn{2}{c}{multicoll.} \\ 
-\cmidrule(lr){2-5} \cmidrule(lr){6-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10}
-Variable & B & SE B & LL & UL & beta & t & p & VIF & TOL \\ 
+ & \multicolumn{4}{c}{unstd.} & std. & \multicolumn{2}{c}{sig.} \\ 
+\cmidrule(lr){2-5} \cmidrule(lr){6-6} \cmidrule(lr){7-8}
+Variable & B & SE B & LL & UL & B* & t & p \\ 
 \midrule\addlinespace[2.5pt]
-(Intercept) & 3.52 & 0.09 & 3.34 & 3.70 & – & 38.83 & <.001 & – & – \\ 
-work\_experience & 0.01 & 0.00 & 0.01 & 0.02 & .160 & 5.72 & <.001 & 1.01 & .990 \\ 
-trust\_government & 0.05 & 0.03 & 0.00 & 0.10 & .050 & 1.85 & .060 & 1.01 & .990 \\ 
+(Intercept) & 3.66 & 0.13 & 3.41 & 3.90 & — & 29.01 & <.001 \\ 
+work\_experience & 0.01 & 0.00 & 0.01 & 0.02 & .160 & 5.37 & <.001 \\ 
+trust\_government & 0.04 & 0.03 & -0.01 & 0.09 & .040 & 1.50 & .130 \\ 
+ethics\_1 & -0.04 & 0.03 & -0.09 & 0.01 & -.040 & -1.43 & .150 \\ 
+ethics\_2 & 0.01 & 0.02 & -0.03 & 0.06 & .020 & 0.68 & .490 \\ 
+ethics\_3 & 0.00 & 0.02 & -0.05 & 0.04 & -.000 & -0.06 & .950 \\ 
+ethics\_4 & -0.03 & 0.02 & -0.07 & 0.01 & -.050 & -1.46 & .140 \\ 
 \bottomrule
 
 \end{longtable}
 
 \begin{minipage}{\linewidth}
-Autonomy Selection, R² = .029, R²adj = .027, F(2,1181) = 17, p = < .001\\
+Autonomy Selection, R² = .034, R²adj = .029, F(6,1177) = 7, p = < .001, CI-Level = 95\%\\
 \end{minipage}
 \endgroup
+
+\begin{center}
+\includegraphics[width=0.85\textwidth,height=\textheight]{testthat_files/figure-pdf/unnamed-chunk-4-1.pdf}
+\end{center}
 
 \subsection{Teiltabelle}\label{teiltabelle}
 
