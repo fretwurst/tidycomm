@@ -67,7 +67,7 @@ knit_regress_table <- function(x,
     cap <- glue::glue("Regression Model on {dependent_var}")
   }
 
-  quality_notes <- glue::glue("{dependent_var}, R² = {R_squared}, R²adj = {R_squared_adj}, F({model_summary$fstatistic[['numdf']]},{model_summary$fstatistic[['dendf']]}) = {F}, p = {pf}, CI-Level = 95%")
+  quality_notes <- glue::glue("{dependent_var}, R^2 = {R_squared}, R^2adj = {R_squared_adj}, F({model_summary$fstatistic[['numdf']]},{model_summary$fstatistic[['dendf']]}) = {F}, p = {pf}, CI-Level = 95%")
 
   tab <- model_tibble
   tab_format <- tab |>
@@ -79,11 +79,11 @@ knit_regress_table <- function(x,
                     't', 'p',
                     'TOL', 'VIF'))) |>
     dplyr::mutate(dplyr::across(-1, ~round(.x, digits)),
-                  dplyr::across(dplyr::any_of("p"), ~format.pval(.x, eps = .001, nsmall = 3, na.form = "—")),
+                  dplyr::across(dplyr::any_of("p"), ~format.pval(.x, eps = .001, nsmall = 3, na.form = "---")),
                   dplyr::across(dplyr::any_of("p"), ~gsub("0\\.","\\.", .x))) |>
     dplyr::mutate(
       dplyr::across(dplyr::any_of(c("beta", "beta_LL", "beta_UL", "TOL")),
-             ~ dplyr::if_else(is.na(.x), "—", sub("^(-?)0.", "\\1.", sprintf("%.3f", .x))))
+             ~ dplyr::if_else(is.na(.x), "---", sub("^(-?)0.", "\\1.", sprintf("%.3f", .x))))
     ) |>
     dplyr::mutate(dplyr::across(dplyr::any_of("VIF"), as.character))
 

@@ -55,7 +55,7 @@ knit_frequencies <- function(data,
         columns = c(cum_valid_percent, valid_percent),
         rows = is.na(!!var_sym)
       ),
-      fn = function(x) "—"
+      fn = function(x) "---"
     )
 
  if(cums == TRUE){
