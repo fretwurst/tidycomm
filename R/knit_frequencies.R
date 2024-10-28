@@ -10,39 +10,39 @@ knit_frequencies <- function(data,
     names()
 
   selected_var_labels <- data |>
-    select(selected_vars) |>
+    dplyr::select(selected_vars) |>
     sjlabelled::label_to_colnames() |>
     names()
 
   dt <- data |>
-    mutate(.temp_weight = if (!is.null({{weight}})) {{weight}} else 1) |>
+    dplyr::mutate(.temp_weight = if (!is.null({{weight}})) {{weight}} else 1) |>
     sjlabelled::label_to_colnames()
 
-  tables <- map(selected_var_labels, ~ {
+  tables <- purrr::map(selected_var_labels, ~ {
     var_sym <- sym(.x)
     n_total <- sum(dt$.temp_weight, na.rm = TRUE)  # Gesamtanzahl für Prozente berechnen
 
     n_valid <- dt %>%
-      filter(!is.na(!!var_sym)) %>%
-      summarise(n_valid = sum(.temp_weight, na.rm = TRUE)) %>%
+      dplyr::filter(!is.na(!!var_sym)) %>%
+      dplyr::summarise(n_valid = sum(.temp_weight, na.rm = TRUE)) %>%
       pull(n_valid)
 
   t <- dt %>%
     group_by(!!var_sym) %>%
-    summarise(n = sum(.temp_weight, na.rm = TRUE), .groups = "drop") %>%
-    mutate(
+    dplyr::summarise(n = sum(.temp_weight, na.rm = TRUE), .groups = "drop") %>%
+    dplyr::mutate(
     percent = n / n_total,
     valid_percent = if_else(is.na(!!var_sym), 0, n / n_valid))
 
   if(cums == TRUE){
     t <- t |>
-      mutate(n_cum = cumsum(n),
+      dplyr::mutate(n_cum = cumsum(n),
              cum_valid_percent = cumsum(valid_percent))
   }
 
   gt <- t |>
     sjlabelled::copy_labels(dt) |>
-    mutate(!!var_sym := coalesce(sjlabelled::as_character(!!var_sym), as.character(!!var_sym))) |>
+    dplyr::mutate(!!var_sym := coalesce(sjlabelled::as_character(!!var_sym), as.character(!!var_sym))) |>
     gt::gt() |>
     gt::fmt_number(columns = n, decimals = num_decimal, use_seps = FALSE)|>
     gt::fmt_percent(columns = c(percent, valid_percent), decimals = percent_decimal, use_seps = FALSE) |>

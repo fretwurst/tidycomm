@@ -10,6 +10,7 @@ reference:
     contents:
       - describe
       - tab_percentiles
+      - knit_frequencies
       - describe_cat
       - tab_frequencies
   - title: "Bivariate analysis"

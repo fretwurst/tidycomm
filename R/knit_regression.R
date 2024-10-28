@@ -16,8 +16,8 @@ knit_regress_table <- function(x,
   model <- model(x)
 
   SDs <- model$model |>
-    dplyr::summarise(across(everything(), ~sd(.x, na.rm = TRUE))) |>
-    tidyr::pivot_longer(cols = everything(), names_to = "Variable", values_to = "SD")
+    dplyr::summarise(dplyr::across(dplyr::everything(), ~sd(.x, na.rm = TRUE))) |>
+    tidyr::pivot_longer(cols = dplyr::everything(), names_to = "Variable", values_to = "SD")
 
   sd_Y <- SDs[1,2] |>
     dplyr::pull()
@@ -71,7 +71,7 @@ knit_regress_table <- function(x,
 
   tab <- model_tibble
   tab_format <- tab |>
-    select(dplyr::any_of(c('Variable',
+    dplyr::select(dplyr::any_of(c('Variable',
                     'B', 'StdErr', 'LL', 'UL',
                     'beta',
        #            'beta_LL', 'beta_UL',
@@ -81,8 +81,8 @@ knit_regress_table <- function(x,
     dplyr::mutate(dplyr::across(-1, ~round(.x, digits)),
                   dplyr::across(dplyr::any_of("p"), ~format.pval(.x, eps = .001, nsmall = 3, na.form = "—")),
                   dplyr::across(dplyr::any_of("p"), ~gsub("0\\.","\\.", .x))) |>
-    mutate(
-      across(dplyr::any_of(c("beta", "beta_LL", "beta_UL", "TOL")),
+    dplyr::mutate(
+      dplyr::across(dplyr::any_of(c("beta", "beta_LL", "beta_UL", "TOL")),
              ~ dplyr::if_else(is.na(.x), "—", sub("^(-?)0.", "\\1.", sprintf("%.3f", .x))))
     ) |>
     dplyr::mutate(dplyr::across(dplyr::any_of("VIF"), as.character))
@@ -151,7 +151,7 @@ knit_regress_table <- function(x,
 ## @family tdcmm visualize
 #
 ## @keywords internal
-
+#' @export
 visualize_regress_sbci <- function(x,
                                    .design = NULL,
                                    title = NULL){
