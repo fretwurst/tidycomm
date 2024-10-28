@@ -1,8 +1,4 @@
-library(dplyr)
-library(purrr)
-library(rlang)
-library(tidyselect)
-
+#' @export
 knit_frequencies <- function(data,
                              ...,
                              weight = NULL,
@@ -10,13 +6,19 @@ knit_frequencies <- function(data,
                              percent_decimal = 0,
                              cums = TRUE) {
 
-  selected_vars <- tidyselect::eval_select(expr(c(...)), data = data)
-  selected_vars <- names(selected_vars) # Namen der ausgewählten Variablen
+  selected_vars <- tidyselect::eval_select(expr(c(...)), data = data) |>
+    names()
 
-  dt <- data %>%
-    mutate(.temp_weight = if (!is.null({{weight}})) {{weight}} else 1)
+  selected_var_labels <- data |>
+    select(selected_vars) |>
+    sjlabelled::label_to_colnames() |>
+    names()
 
-  map(selected_vars, ~ {
+  dt <- data |>
+    mutate(.temp_weight = if (!is.null({{weight}})) {{weight}} else 1) |>
+    sjlabelled::label_to_colnames()
+
+  tables <- map(selected_var_labels, ~ {
     var_sym <- sym(.x)
     n_total <- sum(dt$.temp_weight, na.rm = TRUE)  # Gesamtanzahl für Prozente berechnen
 
@@ -39,9 +41,11 @@ knit_frequencies <- function(data,
   }
 
   gt <- t |>
+    sjlabelled::copy_labels(dt) |>
+    mutate(!!var_sym := coalesce(sjlabelled::as_character(!!var_sym), as.character(!!var_sym))) |>
     gt::gt() |>
-    gt::fmt_number(columns = n, decimals = num_decimal)|>
-    gt::fmt_percent(columns = c(percent, valid_percent), decimals = percent_decimal) |>
+    gt::fmt_number(columns = n, decimals = num_decimal, use_seps = FALSE)|>
+    gt::fmt_percent(columns = c(percent, valid_percent), decimals = percent_decimal, use_seps = FALSE) |>
     gt::cols_label(
       percent = "total %",
       valid_percent = "valid %"
@@ -56,18 +60,32 @@ knit_frequencies <- function(data,
 
  if(cums == TRUE){
    gt <- gt |>
-     gt::fmt_number(columns = c(n_cum), decimals = num_decimal)|>
-     gt::fmt_percent(columns = c(cum_valid_percent), decimals = percent_decimal) |>
+     gt::fmt_number(columns = c(n_cum), decimals = num_decimal, use_seps = FALSE)|>
+     gt::fmt_percent(columns = c(cum_valid_percent), decimals = percent_decimal, use_seps = FALSE) |>
      gt::cols_label(
        n_cum = "cum n",
        cum_valid_percent = "cum %"
      )
  }
 
-return(gt)
-  })
-}
+gt |>
+  # gt::tab_style(
+  #   style = gt::cell_borders(
+  #     sides = "t",
+  #     color = "grey20",  # dunkleres Grau für eine stärkere Linie
+  #     weight = gt::px(2)     # gleiche Dicke wie die Standardabschlusslinien
+  #   ),
+  #   locations = gt::cells_body(
+  #     rows = nrow(gt[["_data"]])
+  #   )
+  # ) |>
+  gt::tab_style(
+    style = gt::cell_text(color = "grey60"),
+    locations = gt::cells_body(
+      rows = nrow(gt[["_data"]])
+    )
+  )
 
-# Funktion aufrufen
-DATEN |>
-  knit_frequencies(var1, var2, var3, var4:var12, c(var13, var14, var15:var30), cums = TRUE)
+  })
+  purrr::walk(tables, print)
+}
