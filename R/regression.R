@@ -191,7 +191,8 @@ regress <- function(data,
 visualize.tdcmm_rgrssn <- function(x,
                                    which = "jitter",
                                    ...,
-                                   .design = NULL) {
+                                   .design = NULL,
+                                   title = NULL) {
 
   if(!is.null(.design)){
     .design <- .design
@@ -213,7 +214,7 @@ visualize.tdcmm_rgrssn <- function(x,
       return(visualize_regress_pp(x, .design))
     }
     if (which == "sbci") {
-      return(visualize_regress_sbci(x, .design))
+      return(visualize_regress_sbci(x, .design, title = title))
     }
     if (which == "qq") {
       return(visualize_regress_qq(x, .design))

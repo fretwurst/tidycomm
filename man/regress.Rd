@@ -34,6 +34,8 @@ need to be numeric}
 
 \item{check_homoscedasticity}{if set, homoscedasticity is being checked
 using a Breusch-Pagan test}
+
+\item{formula}{if exist, the lm-formula is used}
 }
 \value{
 a \link{tdcmm} model

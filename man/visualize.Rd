@@ -19,7 +19,7 @@
 
 \method{visualize}{tdcmm_dscrb}(x, ..., .design = design_lmu())
 
-\method{visualize}{tdcmm_rgrssn}(x, which = "jitter", ..., .design = design_lmu())
+\method{visualize}{tdcmm_rgrssn}(x, which = "jitter", ..., .design = NULL, title = NULL)
 
 \method{visualize}{tdcmm_prcntl}(x, ..., .design = design_lmu())
 
@@ -45,7 +45,7 @@ for all lines that act as comparative lines, and a \link{ggplot2} \code{theme}}
 
 \item{which}{string to specify type of regression visualization. One of
 "jitter" (default), "alpha", "correlogram", "residualsfitted" (or "resfit"),
-"pp", "qq", "scalelocation" (or "scaloc"), "residualsleverage" (or "reslev").
+"pp", "qq", "scalelocation" (or "scaloc"), "residualsleverage" (or "reslev"), "sbci".
 See below for details.}
 }
 \value{
