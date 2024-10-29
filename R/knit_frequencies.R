@@ -107,7 +107,7 @@ gt |>
   gt::tab_style(
     style = gt::cell_text(color = "grey60"),
     locations = gt::cells_body(
-      rows = nrow(gt[["_data"]])
+      rows = is.na(!!var_sym)
     )
   )
 
