@@ -16,7 +16,6 @@
 #'
 #' @family categorical
 #'
-
 #' @export
 knit_frequencies <- function(data,
                              ...,
