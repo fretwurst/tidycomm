@@ -94,16 +94,6 @@ knit_frequencies <- function(data,
  }
 
 gt |>
-  # gt::tab_style(
-  #   style = gt::cell_borders(
-  #     sides = "t",
-  #     color = "grey20",  # dunkleres Grau für eine stärkere Linie
-  #     weight = gt::px(2)     # gleiche Dicke wie die Standardabschlusslinien
-  #   ),
-  #   locations = gt::cells_body(
-  #     rows = nrow(gt[["_data"]])
-  #   )
-  # ) |>
   gt::tab_style(
     style = gt::cell_text(color = "grey60"),
     locations = gt::cells_body(
@@ -112,5 +102,13 @@ gt |>
   )
 
   })
-  purrr::walk(tables, print)
+ tab_list <-  purrr::walk(tables, print)
+
+ if (length(tab_list) == 1) {
+   gt_table <- tab_list[[1]]
+   return(gt_table)
+ } else {
+   return(tab_list)
+ }
+
 }
