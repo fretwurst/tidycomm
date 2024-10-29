@@ -4,7 +4,19 @@
 \alias{knit_regress_table}
 \title{Compute linear regression}
 \usage{
-knit_regress_table(x, digits = 2, CIs = TRUE, cap = NULL)
+knit_regress_table(
+  x,
+  digits = 2,
+  CIs = TRUE,
+  cap = NULL,
+  B = B,
+  LL = LL,
+  UL = UL,
+  beta_LL_compare = NULL,
+  beta_UL_compare = NULL,
+  beta_LL = NULL,
+  beta_UL = NULL
+)
 }
 \arguments{
 \item{x}{a \link{tdcmm} model}

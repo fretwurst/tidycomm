@@ -22,7 +22,14 @@
 knit_regress_table <- function(x,
                                digits = 2,
                                CIs = TRUE,
-                               cap = NULL
+                               cap = NULL,
+                               B = B,
+                               LL = LL,
+                               UL = UL,
+                               beta_LL_compare = NULL,
+                               beta_UL_compare = NULL,
+                               beta_LL = NULL,
+                               beta_UL = NULL
                                ) {
   model <- model(x)
 
@@ -108,18 +115,18 @@ knit_regress_table <- function(x,
     gt::tab_spanner(label = "unstd.",
                     columns =  c("B",
                                  "StdErr",
-                                 starts_with("LL"),
-                                 starts_with("UL")
+                                 dplyr::starts_with("LL"),
+                                 dplyr::starts_with("UL")
                     )) |>
     gt::tab_spanner(label = "std.",
                     columns = c("beta",
-                                starts_with("beta_LL"),
-                                starts_with("beta_UL"))) |>
+                                dplyr::starts_with("beta_LL"),
+                                dplyr::starts_with("beta_UL"))) |>
     gt::tab_spanner(label = "sig.",
                     columns = c("t", "p")) |>
     gt::tab_spanner(label = "multicoll.",
-                    columns = c(starts_with("TOL"),
-                                starts_with("VIF"))) |>
+                    columns = c(dplyr::starts_with("TOL"),
+                                dplyr::starts_with("VIF"))) |>
     gt::sub_missing() |>
     gt::cols_label(StdErr = "SE B",
                    beta = "B*")
@@ -165,7 +172,15 @@ knit_regress_table <- function(x,
 ## @keywords internal
 visualize_regress_sbci <- function(x,
                                    .design = NULL,
-                                   title = NULL){
+                                   title = NULL,
+                                   B = B,
+                                   LL = LL,
+                                   UL = UL,
+                                   beta_LL_compare = NULL,
+                                   beta_UL_compare = NULL,
+                                   beta_LL = NULL,
+                                   beta_UL = NULL
+                                   ){
 
   if(!is.null(.design)){
     design <- .design
@@ -183,8 +198,8 @@ visualize_regress_sbci <- function(x,
 
   # Berechne die Standardabweichungen
   SDs <- model$model |>
-    dplyr::summarise(across(everything(), ~sd(.x, na.rm = TRUE))) |>
-    tidyr::pivot_longer(cols = everything(), names_to = "Variable", values_to = "SD")
+    dplyr::summarise(dplyr::across(dplyr::everything(), ~sd(.x, na.rm = TRUE))) |>
+    tidyr::pivot_longer(cols = dplyr::everything(), names_to = "Variable", values_to = "SD")
 
   sd_Y <- SDs[1, 2] |>
     dplyr::pull()
@@ -210,9 +225,9 @@ visualize_regress_sbci <- function(x,
 
   # Erzeuge das Diagramm
   sbci <- model_tibble |>
-    filter(!is.na(beta)) |>
-    ggplot(aes(y = Variable, x = beta)) +
-    geom_segment(aes(x = beta_LL_compare,
+    dplyr::filter(!is.na(beta)) |>
+    ggplot2::ggplot(aes(y = Variable, x = beta)) +
+    ggplot2::geom_segment(aes(x = beta_LL_compare,
                      xend = beta_UL_compare,
                      y = Variable,
                      yend = Variable,
@@ -220,7 +235,7 @@ visualize_regress_sbci <- function(x,
                  size = 4,
                  alpha = 1) +
     # Dünne Linie für die normalen CIs
-    geom_segment(aes(x = beta_LL,
+    ggplot2::geom_segment(aes(x = beta_LL,
                      xend = beta_UL,
                      y = Variable,
                      yend = Variable,
@@ -228,26 +243,26 @@ visualize_regress_sbci <- function(x,
                  size = 0.8,
                  alpha = 1) +
     # Verwende geom_point, um das "I" als Punkt anzuzeigen
-    geom_point(aes(x = beta, y = Variable, color = "Beta-Value"),
+    ggplot2::geom_point(aes(x = beta, y = Variable, color = "Beta-Value"),
                shape = "|", size = 5) +  # Hier wird das "I" als Punkt verwendet
-    geom_vline(aes(xintercept = 0),
+    ggplot2::geom_vline(aes(xintercept = 0),
                color = "grey",
                linetype = "dotted",
                size = .8) +
     # Achsenbeschriftungen
-    labs(title = title,
+    ggplot2::labs(title = title,
          x = "Beta",
          y = "",
          color = "Legend") +
-    scale_color_manual(values = c(
+    ggplot2::scale_color_manual(values = c(
       "Beta-Value" = design$main_color_1,
       "CIs for BETA comparison" = design$main_colors[2],
       "CIs for point comparison" = design$main_colors[3]
     )) +
-    theme_minimal() +
-    theme(
-      panel.grid.major = element_blank(),   # Entferne alle großen Gitternetzlinien
-      panel.grid.minor = element_blank(),   # Entferne alle kleinen Gitternetzlinien
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      panel.grid.major = ggplot2::element_blank(),   # Entferne alle großen Gitternetzlinien
+      panel.grid.minor = ggplot2::element_blank(),   # Entferne alle kleinen Gitternetzlinien
       legend.position = "bottom"
     )
 
