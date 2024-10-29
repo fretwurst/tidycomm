@@ -1,3 +1,22 @@
+#' knit frequencies table variables
+#'
+#' Knits table for one ore more variables
+#'
+#' @param data a [tibble][tibble::tibble-package]
+#' @param weight Weighting variable. Default = NULL, means all weights are 1.
+#' @param ... List of variables.
+#' @param num_decimals Decimal places of the numeric columns. Default is 0.
+#' @param percent_decimals Decimal places of the percent columns. Default is 0.
+#'
+#' @return a gt-table
+#'
+#' @examples
+#' WoJ |> knit_frequencies(reach, employment)
+#' mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE)
+#'
+#' @family categorical
+#'
+
 #' @export
 knit_frequencies <- function(data,
                              ...,
@@ -25,14 +44,14 @@ knit_frequencies <- function(data,
     n_valid <- dt %>%
       dplyr::filter(!is.na(!!var_sym)) %>%
       dplyr::summarise(n_valid = sum(.temp_weight, na.rm = TRUE)) %>%
-      pull(n_valid)
+      dplyr::pull(n_valid)
 
   t <- dt %>%
-    group_by(!!var_sym) %>%
+    dplyr::group_by(!!var_sym) %>%
     dplyr::summarise(n = sum(.temp_weight, na.rm = TRUE), .groups = "drop") %>%
     dplyr::mutate(
     percent = n / n_total,
-    valid_percent = if_else(is.na(!!var_sym), 0, n / n_valid))
+    valid_percent = dplyr::if_else(is.na(!!var_sym), 0, n / n_valid))
 
   if(cums == TRUE){
     t <- t |>
@@ -42,7 +61,7 @@ knit_frequencies <- function(data,
 
   gt <- t |>
     sjlabelled::copy_labels(dt) |>
-    dplyr::mutate(!!var_sym := coalesce(sjlabelled::as_character(!!var_sym), as.character(!!var_sym))) |>
+    dplyr::mutate(!!var_sym := dplyr::coalesce(sjlabelled::as_character(!!var_sym), as.character(!!var_sym))) |>
     gt::gt() |>
     gt::fmt_number(columns = n, decimals = num_decimal, use_seps = FALSE)|>
     gt::fmt_percent(columns = c(percent, valid_percent), decimals = percent_decimal, use_seps = FALSE) |>
@@ -52,7 +71,7 @@ knit_frequencies <- function(data,
       ) |>
     gt::text_transform(
       locations = gt::cells_body(
-        columns = c(cum_valid_percent, valid_percent),
+        columns = c(valid_percent),
         rows = is.na(!!var_sym)
       ),
       fn = function(x) "---"
@@ -65,6 +84,13 @@ knit_frequencies <- function(data,
      gt::cols_label(
        n_cum = "cum n",
        cum_valid_percent = "cum %"
+     )|>
+     gt::text_transform(
+       locations = gt::cells_body(
+         columns = c(cum_valid_percent),
+         rows = is.na(!!var_sym)
+       ),
+       fn = function(x) "---"
      )
  }
 

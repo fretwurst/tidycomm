@@ -1,12 +1,23 @@
-
-# Visualize as html- or pdf-table with linear model ---
-#
-# @param x a [tdcmm] model
-#
-# @return html-, pdf- or word-table
-#
-# @family tdcmm visualize
-#
+#' Compute linear regression
+#'
+#' Computes linear regression for all independent variables on the specified
+#' dependent variable. Linear modeling of multiple independent variables uses
+#' stepwise regression modeling. If specified, preconditions for
+#' (multi-)collinearity and for homoscedasticity are checked.
+#'
+#' @param x a [tdcmm] model
+#' @param digits the decimal digits
+#' @param CIs show the Confidence intervals or not. Default to TRUE.
+#' @param cap Set the caption. Default is NULL, because in Quarto its better to set the tbl-cap in the chunk options
+#'
+#' @return a gt-table
+#'
+#' @examples
+#' WoJ |> regress(autonomy_selection, ethics_1) |>
+#'   knit_regress_table()
+#' WoJ %>% regress(autonomy_selection, work_experience, trust_government) |>
+#'   knit_regress_table(digits = 3, CIs = FALSE, cap = "Regression on Autonomy Selection")
+#'
 #' @export
 knit_regress_table <- function(x,
                                digits = 2,
@@ -141,6 +152,7 @@ knit_regress_table <- function(x,
  return(x)
   }
 }
+
 ## Visualize swimming BETA confidence intervals
 ## Usefull for comparing BETAs and BETAs vs points like 0
 ##
@@ -151,7 +163,6 @@ knit_regress_table <- function(x,
 ## @family tdcmm visualize
 #
 ## @keywords internal
-#' @export
 visualize_regress_sbci <- function(x,
                                    .design = NULL,
                                    title = NULL){

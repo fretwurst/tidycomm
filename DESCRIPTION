@@ -39,7 +39,6 @@ Imports:
     GGally,
     ggplot2,
     glue,
-    kableExtra,
     lm.beta,
     lubridate,
     magrittr,
@@ -53,7 +52,6 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    flextable,
     sjlabelled,
     gt
 Suggests: 
