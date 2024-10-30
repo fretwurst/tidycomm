@@ -93,7 +93,7 @@ knit_frequencies <- function(data,
      )
  }
 
-gt |>
+ gt <- gt |>
   gt::tab_style(
     style = gt::cell_text(color = "grey60"),
     locations = gt::cells_body(
@@ -102,13 +102,12 @@ gt |>
   )
 
   })
- tab_list <-  purrr::walk(tables, print)
 
- if (length(tab_list) == 1) {
-   gt_table <- tab_list[[1]]
+ if (length(tables) == 1) {
+   gt_table <- tables[[1]]
    return(gt_table)
  } else {
-   return(tab_list)
+   purrr::walk(tables, print)
  }
 
 }
