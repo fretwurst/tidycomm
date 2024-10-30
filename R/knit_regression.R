@@ -85,7 +85,7 @@ knit_regress_table <- function(x,
     cap <- glue::glue("Regression Model on {dependent_var}")
   }
 
-  quality_notes <- glue::glue("{dependent_var}, R^2 = {R_squared}, R^2adj = {R_squared_adj}, F({model_summary$fstatistic[['numdf']]},{model_summary$fstatistic[['dendf']]}) = {F}, p = {pf}, CI-Level = 95%")
+  quality_notes <- glue::glue("{dependent_var}, R² = {R_squared}, R²adj = {R_squared_adj}, F({model_summary$fstatistic[['numdf']]},{model_summary$fstatistic[['dendf']]}) = {F}, p = {pf}, CI-Level = 95%")
 
   tab <- model_tibble
   tab_format <- tab |>
