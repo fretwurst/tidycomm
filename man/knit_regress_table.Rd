@@ -7,6 +7,7 @@
 knit_regress_table(
   x,
   digits = 2,
+  R2adj = FALSE,
   CIs = TRUE,
   cap = NULL,
   B = B,
@@ -22,6 +23,8 @@ knit_regress_table(
 \item{x}{a \link{tdcmm} model}
 
 \item{digits}{the decimal digits}
+
+\item{R2adj}{Show R^2adj in the table footnote. Default is FALSE.}
 
 \item{CIs}{show the Confidence intervals or not. Default to TRUE.}
 

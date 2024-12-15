@@ -92,7 +92,12 @@ if(model$df.residual < 100 | R2adj == TRUE) {
     cap <- glue::glue("Regression Model on {dependent_var}")
   }
 
-  quality_notes <- glue::glue("{dependent_var}, R² = {R_squared}, F({model_summary$fstatistic[['numdf']]},{model_summary$fstatistic[['dendf']]}) = {F}, p = {pf}, CI-Level = 95%")
+  quality_notes_R2 <- glue::glue("{dependent_var}, R² = {R_squared}")
+
+  quality_notes_F <- glue::glue("
+        F({model_summary$fstatistic[['numdf']]},{model_summary$fstatistic[['dendf']]}) = {F}, p = {pf}, CI-Level = 95%")
+  
+  
 
   tab <- model_tibble
   tab_format <- tab |>
@@ -116,7 +121,8 @@ if(model$df.residual < 100 | R2adj == TRUE) {
     gt::gt() |>
     gt::cols_align(align = ("right"),
                    columns = -1) |>
-    gt::tab_footnote(quality_notes) |>
+    gt::tab_footnote(footnote = quality_notes_R2, placement = "left") |>
+    gt::tab_footnote(footnote = quality_notes_F, placement = "left") |>
     gt::tab_options(
       table.width = gt::pct(80)) |>
     gt::tab_spanner(label = "unstd.",
