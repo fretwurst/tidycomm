@@ -113,15 +113,19 @@ reg_tab |>
   tidycomm::visualize(which = "resfit", .design = design_viridis())
 ```
 
+# Häufigkeitsauszählung
 
 ```{r}
+#| echo: false
+
+
 DATEN |> 
   sjlabelled::var_labels(autonomy_selection = "Wahlfreiheit") |> 
   sjlabelled::set_labels(autonomy_selection, labels = c("keine" = 1, "volle" = 5)) |> 
-  knit_frequencies(autonomy_selection, work_experience)
+  tidycomm::knit_frequencies(autonomy_selection, work_experience)
 
 DATEN |> 
-  knit_frequencies(country) |> 
+  tidycomm::knit_frequencies(country) |> 
   gt::tab_options(table.font.size = 18)
 ```
 

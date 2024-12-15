@@ -10,6 +10,11 @@ knit_frequencies(
   weight = NULL,
   num_decimal = 0,
   percent_decimal = 0,
+  name_n = "N",
+  name_total_percent = "Prozent",
+  name_valid_percent = "Valide \%",
+  name_cum_n = "Kum n",
+  name_cum_percent = "Kum \%",
   cums = TRUE
 )
 }
@@ -19,6 +24,16 @@ knit_frequencies(
 \item{...}{List of variables.}
 
 \item{weight}{Weighting variable. Default = NULL, means all weights are 1.}
+
+\item{name_n}{Rename Column n. Default is "N".}
+
+\item{name_total_percent}{Rename total percent. Default is "Prozent".}
+
+\item{name_valid_percent}{Rename valid percent. Default is "N".}
+
+\item{name_cum_n}{Rename cum n. Default is "Kum n".}
+
+\item{name_cum_percent}{Rename cum n. Default is "Kum \%".}
 
 \item{num_decimals}{Decimal places of the numeric columns. Default is 0.}
 
