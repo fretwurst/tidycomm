@@ -25,6 +25,10 @@ knit_frequencies(
 
 \item{weight}{Weighting variable. Default = NULL, means all weights are 1.}
 
+\item{num_decimal}{Decimal places of the numeric columns. Default is 0.}
+
+\item{percent_decimal}{Decimal places of the percent columns. Default is 0.}
+
 \item{name_n}{Rename Column n. Default is "N".}
 
 \item{name_total_percent}{Rename total percent. Default is "Prozent".}
@@ -35,9 +39,7 @@ knit_frequencies(
 
 \item{name_cum_percent}{Rename cum n. Default is "Kum \%".}
 
-\item{num_decimals}{Decimal places of the numeric columns. Default is 0.}
-
-\item{percent_decimals}{Decimal places of the percent columns. Default is 0.}
+\item{cums}{Produce columns for cumulative counts and percents.}
 }
 \value{
 a gt-table

@@ -5,8 +5,8 @@
 #' @param data a [tibble][tibble::tibble-package]
 #' @param weight Weighting variable. Default = NULL, means all weights are 1.
 #' @param ... List of variables.
-#' @param num_decimals Decimal places of the numeric columns. Default is 0.
-#' @param percent_decimals Decimal places of the percent columns. Default is 0.
+#' @param num_decimal Decimal places of the numeric columns. Default is 0.
+#' @param percent_decimal Decimal places of the percent columns. Default is 0.
 #' @param cums Produce columns for cumulative counts and percents.
 #' @param name_n Rename Column n. Default is "N".
 #' @param name_total_percent Rename total percent. Default is "Prozent".
