@@ -9,6 +9,7 @@
 #' @param digits the decimal digits
 #' @param CIs show the Confidence intervals or not. Default to TRUE.
 #' @param cap Set the caption. Default is NULL, because in Quarto its better to set the tbl-cap in the chunk options
+#' @param R2adj Show R^2adj in the table footnote. Default is FALSE.
 #'
 #' @return a gt-table
 #'
@@ -21,6 +22,7 @@
 #' @export
 knit_regress_table <- function(x,
                                digits = 2,
+                               R2adj = FALSE,
                                CIs = TRUE,
                                cap = NULL,
                                B = B,
@@ -70,9 +72,14 @@ knit_regress_table <- function(x,
     round(3)  %>%
     gsub("0\\.","\\.", .)
 
+if(model$df.residual < 100 | R2adj == TRUE) {
+
   R_squared_adj <- model_summary$adj.r.squared |>
     round(3) %>%
-    gsub("0\\.","\\.", .)
+    gsub("0\\.","\\.", .) 
+  
+  R_squared <- glue::glue("{R_squared}, R²adj = {R_squared_adj}") 
+}
 
   F <- model_summary$fstatistic[['value']] |>
     round(0)
@@ -85,7 +92,7 @@ knit_regress_table <- function(x,
     cap <- glue::glue("Regression Model on {dependent_var}")
   }
 
-  quality_notes <- glue::glue("{dependent_var}, R² = {R_squared}, R²adj = {R_squared_adj}, F({model_summary$fstatistic[['numdf']]},{model_summary$fstatistic[['dendf']]}) = {F}, p = {pf}, CI-Level = 95%")
+  quality_notes <- glue::glue("{dependent_var}, R² = {R_squared}, F({model_summary$fstatistic[['numdf']]},{model_summary$fstatistic[['dendf']]}) = {F}, p = {pf}, CI-Level = 95%")
 
   tab <- model_tibble
   tab_format <- tab |>

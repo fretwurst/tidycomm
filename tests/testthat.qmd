@@ -126,6 +126,7 @@ DATEN |>
 
 DATEN |> 
   tidycomm::knit_frequencies(country) |> 
-  gt::tab_options(table.font.size = 18)
+  gt::tab_options(table.font.size = 18,
+        table.width = "auto")
 ```
 
