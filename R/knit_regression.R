@@ -124,7 +124,7 @@ if(model$df.residual < 100 | R2adj == TRUE) {
     gt::tab_footnote(footnote = quality_notes_R2, placement = "left") |>
     gt::tab_footnote(footnote = quality_notes_F, placement = "left") |>
     gt::tab_options(
-      table.width = gt::pct(80)) |>
+      table.width = gt::pct(85)) |>
     gt::tab_spanner(label = "unstd.",
                     columns =  c("B",
                                  "StdErr",
