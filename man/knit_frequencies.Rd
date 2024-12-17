@@ -7,6 +7,7 @@
 knit_frequencies(
   data,
   ...,
+  width_pct = 80,
   weight = NULL,
   num_decimal = 0,
   percent_decimal = 0,

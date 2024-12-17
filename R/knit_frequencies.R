@@ -25,6 +25,7 @@
 #' @export
 knit_frequencies <- function(data,
                              ...,
+                             width_pct = 80,
                              weight = NULL,
                              num_decimal = 0,
                              percent_decimal = 0,
@@ -69,6 +70,14 @@ knit_frequencies <- function(data,
              cum_valid_percent = cumsum(valid_percent))
   }
 
+  t_sum <- t |>
+    dplyr::summarise(n = sum(n, na.rm = TRUE),
+                    percent = sum(percent, na.rm = TRUE),
+                    valid_percent = sum(valid_percent, na.rm = TRUE)) 
+    
+  t <- t |>
+    dplyr::bind_rows(t_sum)
+    
   t <- t |>
     dplyr::rename(
       !!name_n := n,
@@ -96,7 +105,7 @@ knit_frequencies <- function(data,
         rows = is.na(!!var_sym)
       ),
       fn = function(x) "---"
-    )
+    ) 
 
  if(cums == TRUE){
    gt <- gt |>
@@ -112,6 +121,7 @@ knit_frequencies <- function(data,
  }
 
  gt <- gt |>
+ gt::sub_missing(columns = tidyselect::everything(), missing_text = "---") |>
   gt::tab_style(
     style = gt::cell_text(color = "grey60"),
     locations = gt::cells_body(
@@ -122,8 +132,11 @@ knit_frequencies <- function(data,
   })
 
  if (length(tables) == 1) {
+   
    gt_table <- tables[[1]]
+
    return(gt_table)
+ 
  } else {
    purrr::walk(tables, print)
  }
