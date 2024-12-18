@@ -124,49 +124,8 @@ reg_tab |>
 #   tidycomm::knit_frequencies(autonomy_selection, work_experience)
 
 DATEN |> 
-  tidycomm::knit_frequencies(country) |> 
-  gt::tab_options(table.font.size = 18,
-        table.width = "auto")
+  tidycomm::knit_frequencies(country, width_pct = 80) |> 
+  gt::tab_footnote("Erste Zeile mit etwas Text, der dann umgebrochen werden")|>
+  gt::tab_footnote("muss, damit er in die Breite der Tabelle passt.")
 ```
 
-
-```{r}
-#| eval: false
-
-df <- head(mtcars)
-
-df %>%
-  gt::gt() |>
-  gt::tab_footnote(footnote = "Color indicates the solar zenith angle.")
-```
-
-
-```{r}
-library(tinytable)
-
-tmp <- rbind(mtcars, mtcars)[, 1:6]
-```
-
-::: {.content-visible when-format="pdf"}
-
-\ref{tbl-long-thing} will only appear in PDF
-
-```{r}
-tt(tmp, width = 0.7, caption = "A long table \\label{tbl-long-thing}") |>
-  theme_tt("multipage", rowhead = 1)
-```
-
-:::
-
-::: {.content-visible when-format="html"}
-
-@tbl-long-thing will only appear in HTML
-
-```{r}
-#| label: tbl-long-thing
-#| tbl-cap: "A long table"
-
-tt(tmp, width = 0.8)
-```
-
-:::

@@ -122,6 +122,8 @@ knit_frequencies <- function(data,
 
  gt <- gt |>
  gt::sub_missing(columns = tidyselect::everything(), missing_text = "---") |>
+   gt::tab_options(
+     table.width = gt::pct(width_pct))|>
   gt::tab_style(
     style = gt::cell_text(color = "grey60"),
     locations = gt::cells_body(
