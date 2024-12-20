@@ -96,7 +96,7 @@ knit_frequencies <- function(data,
   t <- t |>
     sjlabelled::copy_labels(dt) |>
     dplyr::mutate(!!var_sym := dplyr::coalesce(sjlabelled::as_character(!!var_sym), as.character(!!var_sym))) |>
-    dplyr::mutate(!!var_sym := dplyr::if_else(row_number() == n(), "Gesamt", !!var_sym))
+    dplyr::mutate(!!var_sym := dplyr::if_else(dplyr::row_number() == dplyr::n(), "Gesamt", !!var_sym))
     
   gt <- t |>
     gt::gt() |>
@@ -126,9 +126,9 @@ knit_frequencies <- function(data,
  gt <- gt |>
  gt::sub_missing(columns = tidyselect::everything(), missing_text = "---") |>
    gt::tab_options(
-     table.width = gt::pct(width_pct))|>
+     table.width = gt::pct(width_pct)) |>
   gt::tab_style(
-    style = gt::cell_text(color = "grey60"),
+    style = gt::cell_text(color = "#cccccc"),
     locations = gt::cells_body(
       rows = is.na(!!var_sym)
     )

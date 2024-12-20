@@ -126,6 +126,7 @@ reg_tab |>
 DATEN |> 
   tidycomm::knit_frequencies(country, width_pct = 80) |> 
   gt::tab_footnote("Erste Zeile mit etwas Text, der dann umgebrochen werden")|>
-  gt::tab_footnote("muss, damit er in die Breite der Tabelle passt.")
+  gt::tab_footnote("muss, damit er in die Breite der Tabelle passt.") |>
+  gt::tab_style(style = gt::cell_text(align = "left"), locations = gt::cells_footnotes())
 ```
 
