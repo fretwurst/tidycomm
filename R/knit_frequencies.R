@@ -92,13 +92,13 @@ knit_frequencies <- function(data,
         !!name_cum_percent := cum_valid_percent
       )
   }
-
+    
   gt <- t |>
     sjlabelled::copy_labels(dt) |>
     dplyr::mutate(!!var_sym := dplyr::coalesce(sjlabelled::as_character(!!var_sym), as.character(!!var_sym))) |>
     gt::gt() |>
     gt::fmt_number(columns = !!name_n, decimals = num_decimal, use_seps = FALSE)|>
-    gt::fmt_percent(columns = c(!!name_total_percent, !!name_valid_percent), decimals = percent_decimal, use_seps = FALSE) |>
+    gt::fmt_percent(columns = any_of(c(!!name_total_percent, !!name_valid_percent)), decimals = percent_decimal, use_seps = FALSE) |>
     gt::text_transform(
       locations = gt::cells_body(
         columns = c(!!name_valid_percent),
