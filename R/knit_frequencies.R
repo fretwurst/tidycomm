@@ -45,6 +45,7 @@ knit_frequencies <- function(data,
     names()
 
   dt <- data |>
+    dplyr::select(selected_vars, any_of(weight)) |>
     dplyr::mutate(.temp_weight = if (!is.null({{weight}})) {{weight}} else 1) |>
     sjlabelled::label_to_colnames()
 
