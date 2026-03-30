@@ -1,6 +1,0 @@
-\babel@toc {nswissgerman}{}\relax 
-\contentsline {section}{\numberline {1}Regressionsanalyse mit den Daten ``World of Journalism''}{1}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Teiltabelle}{1}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Analyse der Voraussetzungen}{1}{subsection.1.2}%
-\contentsline {section}{\numberline {2}Häufigkeitsauszählung}{3}{section.2}%
-\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

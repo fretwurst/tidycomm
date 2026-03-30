@@ -48,6 +48,7 @@ knit_frequencies <- function(
     names()
 
   dt <- data |>
+    dplyr::select(selected_vars, any_of(weight)) |>
     dplyr::mutate(
       .temp_weight = if (!is.null({{ weight }})) {{ weight }} else {
         1
