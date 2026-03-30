@@ -13,29 +13,32 @@
 #' @param name_valid_percent Rename valid percent. Default is "N".
 #' @param name_cum_n Rename cum n. Default is "Kum n".
 #' @param name_cum_percent Rename cum n. Default is "Kum %".
+#' @param name_row_total Rename cum n. Default is "Kum %".
 #'
 #' @return a gt-table
 #'
 #' @examples
 #' WoJ |> knit_frequencies(reach, employment)
-#' mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE)
+#' mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE, name_percent = "Percent")
 #'
 #' @family categorical
 #'
 #' @export
-knit_frequencies <- function(data,
-                             ...,
-                             width_pct = 80,
-                             weight = NULL,
-                             num_decimal = 0,
-                             percent_decimal = 0,
-                             name_n = "N",
-                             name_total_percent = "Prozent",
-                             name_valid_percent = "Valide %",
-                             name_cum_n = "Kum n",
-                             name_cum_percent = "Kum %",
-                             cums = TRUE) {
-
+knit_frequencies <- function(
+  data,
+  ...,
+  width_pct = 80,
+  weight = NULL,
+  num_decimal = 0,
+  percent_decimal = 0,
+  name_n = "N",
+  name_total_percent = "Prozent",
+  name_valid_percent = "Valide %",
+  name_cum_n = "Kum n",
+  name_cum_percent = "Kum %",
+  name_row_total = "Gesamt",
+  cums = TRUE
+) {
   selected_vars <- tidyselect::eval_select(expr(c(...)), data = data) |>
     names()
 
@@ -45,105 +48,147 @@ knit_frequencies <- function(data,
     names()
 
   dt <- data |>
-    dplyr::mutate(.temp_weight = if (!is.null({{weight}})) {{weight}} else 1) |>
+    dplyr::mutate(
+      .temp_weight = if (!is.null({{ weight }})) {{ weight }} else {
+        1
+      }
+    ) |>
     sjlabelled::label_to_colnames()
 
-  tables <- purrr::map(selected_var_labels, ~ {
-    var_sym <- sym(.x)
-    n_total <- sum(dt$.temp_weight, na.rm = TRUE)  # Gesamtanzahl für Prozente berechnen
+  tables <- purrr::map(
+    selected_var_labels,
+    ~ {
+      var_sym <- sym(.x)
+      n_total <- sum(dt$.temp_weight, na.rm = TRUE) # Gesamtanzahl für Prozente berechnen
 
-    n_valid <- dt %>%
-      dplyr::filter(!is.na(!!var_sym)) %>%
-      dplyr::summarise(n_valid = sum(.temp_weight, na.rm = TRUE)) %>%
-      dplyr::pull(n_valid)
+      n_valid <- dt %>%
+        dplyr::filter(!is.na(!!var_sym)) %>%
+        dplyr::summarise(n_valid = sum(.temp_weight, na.rm = TRUE)) %>%
+        dplyr::pull(n_valid)
 
-  t <- dt %>%
-    dplyr::group_by(!!var_sym) %>%
-    dplyr::summarise(n = sum(.temp_weight, na.rm = TRUE), .groups = "drop") %>%
-    dplyr::mutate(
-    percent = n / n_total,
-    valid_percent = dplyr::if_else(is.na(!!var_sym), 0, n / n_valid))
+      t <- dt %>%
+        dplyr::group_by(!!var_sym) %>%
+        dplyr::summarise(
+          n = sum(.temp_weight, na.rm = TRUE),
+          .groups = "drop"
+        ) %>%
+        dplyr::mutate(
+          percent = n / n_total,
+          valid_percent = dplyr::if_else(is.na(!!var_sym), 0, n / n_valid)
+        )
 
-  if(cums == TRUE){
-    t <- t |>
-      dplyr::mutate(n_cum = cumsum(n),
-             cum_valid_percent = cumsum(valid_percent))
+      if (cums == TRUE) {
+        t <- t |>
+          dplyr::mutate(
+            n_cum = cumsum(n),
+            cum_valid_percent = cumsum(valid_percent)
+          )
+      }
+
+      t_sum <- t |>
+        dplyr::summarise(
+          n = sum(n, na.rm = TRUE),
+          percent = sum(percent, na.rm = TRUE),
+          valid_percent = sum(valid_percent, na.rm = TRUE)
+        )
+
+      t <- t |>
+        dplyr::bind_rows(t_sum)
+
+      t <- t |>
+        dplyr::rename(
+          !!name_n := n,
+          !!name_total_percent := percent,
+          !!name_valid_percent := valid_percent
+        )
+
+      if (cums == TRUE) {
+        t <- t |>
+          dplyr::rename(
+            !!name_cum_n := n_cum,
+            !!name_cum_percent := cum_valid_percent
+          )
+      }
+
+      t <- t |>
+        sjlabelled::copy_labels(dt) |>
+        dplyr::mutate(
+          !!var_sym := dplyr::coalesce(
+            sjlabelled::as_character(!!var_sym),
+            as.character(!!var_sym)
+          )
+        ) |>
+        dplyr::mutate(
+          !!var_sym := dplyr::if_else(
+            dplyr::row_number() == dplyr::n(),
+            !!name_row_total,
+            !!var_sym
+          )
+        )
+
+      gt <- t |>
+        gt::gt() |>
+        gt::fmt_number(
+          columns = !!name_n,
+          decimals = num_decimal,
+          use_seps = FALSE
+        ) |>
+        gt::fmt_percent(
+          columns = any_of(c(!!name_total_percent, !!name_valid_percent)),
+          decimals = percent_decimal,
+          use_seps = FALSE
+        ) |>
+        gt::text_transform(
+          locations = gt::cells_body(
+            columns = c(!!name_valid_percent),
+            rows = is.na(!!var_sym)
+          ),
+          fn = function(x) "---"
+        )
+
+      if (cums == TRUE) {
+        gt <- gt |>
+          gt::fmt_number(
+            columns = c(!!name_cum_n),
+            decimals = num_decimal,
+            use_seps = FALSE
+          ) |>
+          gt::fmt_percent(
+            columns = c(!!name_cum_percent),
+            decimals = percent_decimal,
+            use_seps = FALSE
+          ) |>
+          gt::text_transform(
+            locations = gt::cells_body(
+              columns = c(!!name_cum_percent),
+              rows = is.na(!!var_sym)
+            ),
+            fn = function(x) "---"
+          )
+      }
+
+      gt <- gt |>
+        gt::sub_missing(
+          columns = tidyselect::everything(),
+          missing_text = "---"
+        ) |>
+        gt::tab_options(
+          table.width = gt::pct(width_pct)
+        ) |>
+        gt::tab_style(
+          style = gt::cell_text(color = "#cccccc"),
+          locations = gt::cells_body(
+            rows = is.na(!!var_sym)
+          )
+        )
+    }
+  )
+
+  if (length(tables) == 1) {
+    gt_table <- tables[[1]]
+
+    return(gt_table)
+  } else {
+    purrr::walk(tables, print)
   }
-
-  t_sum <- t |>
-    dplyr::summarise(n = sum(n, na.rm = TRUE),
-                    percent = sum(percent, na.rm = TRUE),
-                    valid_percent = sum(valid_percent, na.rm = TRUE)) 
-    
-  t <- t |>
-    dplyr::bind_rows(t_sum)
-    
-  t <- t |>
-    dplyr::rename(
-      !!name_n := n,
-      !!name_total_percent := percent,
-      !!name_valid_percent := valid_percent
-    )
-
-  if(cums == TRUE){
-    t <- t |>
-      dplyr::rename(
-        !!name_cum_n := n_cum,
-        !!name_cum_percent := cum_valid_percent
-      )
-  }
-    
-  t <- t |>
-    sjlabelled::copy_labels(dt) |>
-    dplyr::mutate(!!var_sym := dplyr::coalesce(sjlabelled::as_character(!!var_sym), as.character(!!var_sym))) |>
-    dplyr::mutate(!!var_sym := dplyr::if_else(dplyr::row_number() == dplyr::n(), "Gesamt", !!var_sym))
-    
-  gt <- t |>
-    gt::gt() |>
-    gt::fmt_number(columns = !!name_n, decimals = num_decimal, use_seps = FALSE)|>
-    gt::fmt_percent(columns = any_of(c(!!name_total_percent, !!name_valid_percent)), decimals = percent_decimal, use_seps = FALSE) |>
-    gt::text_transform(
-      locations = gt::cells_body(
-        columns = c(!!name_valid_percent),
-        rows = is.na(!!var_sym)
-      ),
-      fn = function(x) "---"
-    ) 
-
- if(cums == TRUE){
-   gt <- gt |>
-     gt::fmt_number(columns = c(!!name_cum_n), decimals = num_decimal, use_seps = FALSE)|>
-     gt::fmt_percent(columns = c(!!name_cum_percent), decimals = percent_decimal, use_seps = FALSE) |>
-     gt::text_transform(
-       locations = gt::cells_body(
-         columns = c(!!name_cum_percent),
-         rows = is.na(!!var_sym)
-       ),
-       fn = function(x) "---"
-     )
- }
-
- gt <- gt |>
- gt::sub_missing(columns = tidyselect::everything(), missing_text = "---") |>
-   gt::tab_options(
-     table.width = gt::pct(width_pct)) |>
-  gt::tab_style(
-    style = gt::cell_text(color = "#cccccc"),
-    locations = gt::cells_body(
-      rows = is.na(!!var_sym)
-    )
- )
-
-  })
-
- if (length(tables) == 1) {
-   
-   gt_table <- tables[[1]]
-
-   return(gt_table)
- 
- } else {
-   purrr::walk(tables, print)
- }
-
 }

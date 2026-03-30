@@ -32,20 +32,14 @@ get_mode <- function(x) {
 ##
 ## @keywords internal
 gold_standards <- function(ucm, var_level, gold_standard = FALSE) {
-
   # Add support for gold standard
 
   if (var_level %in% c("interval", "ratio")) {
-
     apply(ucm, 1, mean)
-
   } else {
-
     # Default: return mode
     apply(ucm, 1, get_mode)
-
   }
-
 }
 
 
@@ -61,8 +55,12 @@ gold_standards <- function(ucm, var_level, gold_standard = FALSE) {
 ## @family intercoder reliability
 ##
 ## @keywords internal
-compare_coder_against_gs <- function(coder_vals, gold_standards, var_level, var_tol) {
-
+compare_coder_against_gs <- function(
+  coder_vals,
+  gold_standards,
+  var_level,
+  var_tol
+) {
   # Add support for metric variables with tolerance
 
   # Default: simple comparison
@@ -83,9 +81,13 @@ compare_coder_against_gs <- function(coder_vals, gold_standards, var_level, var_
 ## @family intercoder reliability
 ##
 ## @keywords internal
-compute_lotus <- function(ucm, var_level, var_tol, gold_standard,
-                          standardize = FALSE) {
-
+compute_lotus <- function(
+  ucm,
+  var_level,
+  var_tol,
+  gold_standard,
+  standardize = FALSE
+) {
   if (missing(gold_standard)) {
     gold_standard <- 0
   }
@@ -116,9 +118,13 @@ compute_lotus <- function(ucm, var_level, var_tol, gold_standard,
 ## @family intercoder reliability
 ##
 ## @keywords internal
-icr_lotus <- function(ucm, var_level, var_tol, gold_standard,
-                      standardize = FALSE) {
-
+icr_lotus <- function(
+  ucm,
+  var_level,
+  var_tol,
+  gold_standard,
+  standardize = FALSE
+) {
   if (missing(var_level)) {
     var_level <- "nominal"
   }
@@ -132,6 +138,4 @@ icr_lotus <- function(ucm, var_level, var_tol, gold_standard,
   }
 
   mean(compute_lotus(ucm, var_level, var_tol, gold_standard, standardize))
-
 }
-
