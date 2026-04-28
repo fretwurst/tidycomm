@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' WoJ |> knit_frequencies(reach, employment)
-#' mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE, name_percent = "Percent")
+#' mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE, name_total_percent = "Percent")
 #'
 #' @family categorical
 #'

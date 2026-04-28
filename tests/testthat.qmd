@@ -54,6 +54,17 @@ options(
 DATEN <- tidycomm::WoJ
 ```
 
+# Kreuztabelle
+
+```{r}
+DATEN  |> tidycomm::knit_crosstab(reach, employment)
+```
+
+```{r}
+tidycomm::WoJ  |> tidycomm::knit_crosstab(reach, employment, percent = FALSE)
+
+```
+
 # Regressionsanalyse mit den Daten "World of Journalism"
 
 Es ist immer ratsam sich zunächst die Regressionskoeffizienten genau anzuschauen, was mit einer Tabelle praktisch am besten geht, wie sie in @tbl-tab1 einsehbar ist.

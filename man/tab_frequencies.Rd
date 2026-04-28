@@ -26,6 +26,7 @@ WoJ \%>\% tab_frequencies(employment, country)
 \seealso{
 Other categorical: 
 \code{\link{crosstab}()},
+\code{\link{knit_crosstab}()},
 \code{\link{knit_frequencies}()}
 }
 \concept{categorical}

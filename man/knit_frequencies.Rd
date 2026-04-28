@@ -16,6 +16,7 @@ knit_frequencies(
   name_valid_percent = "Valide \%",
   name_cum_n = "Kum n",
   name_cum_percent = "Kum \%",
+  name_row_total = "Gesamt",
   cums = TRUE
 )
 }
@@ -40,6 +41,8 @@ knit_frequencies(
 
 \item{name_cum_percent}{Rename cum n. Default is "Kum \%".}
 
+\item{name_row_total}{Rename cum n. Default is "Kum \%".}
+
 \item{cums}{Produce columns for cumulative counts and percents.}
 }
 \value{
@@ -50,12 +53,13 @@ Knits table for one ore more variables
 }
 \examples{
 WoJ |> knit_frequencies(reach, employment)
-mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE)
+mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE, name_total_percent = "Percent")
 
 }
 \seealso{
 Other categorical: 
 \code{\link{crosstab}()},
+\code{\link{knit_crosstab}()},
 \code{\link{tab_frequencies}()}
 }
 \concept{categorical}
