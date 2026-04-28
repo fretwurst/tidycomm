@@ -50,19 +50,19 @@ options(
 ```{r}
 #| label: Analyseobjekt
 #| include: false
-
-DATEN <- tidycomm::WoJ
+DATEN <- tidycomm::WoJ |>
+  sjlabelled::var_labels(reach = "Reichweite", employment = "Anstellung")
 ```
 
 # Kreuztabelle
 
 ```{r}
-DATEN  |> tidycomm::knit_crosstab(reach, employment)
+DATEN |>
+  tidycomm::knit_crosstab(reach, employment)
 ```
 
 ```{r}
-tidycomm::WoJ  |> tidycomm::knit_crosstab(reach, employment, percent = FALSE)
-
+DATEN |> tidycomm::knit_crosstab(reach, employment, percent = FALSE)
 ```
 
 # Regressionsanalyse mit den Daten "World of Journalism"

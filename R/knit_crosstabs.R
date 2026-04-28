@@ -25,8 +25,8 @@
 #' @export
 knit_crosstab <- function(
   data,
-  row_var,
   col_var,
+  row_var,
   width_pct = 80,
   weight = NULL,
   na = FALSE,
@@ -45,6 +45,16 @@ knit_crosstab <- function(
         1
       }
     )
+
+  row_var_label <- dt |>
+    dplyr::select({{ row_var }}) |>
+    sjlabelled::label_to_colnames() |>
+    colnames()
+
+  col_var_label <- dt |>
+    dplyr::select({{ col_var }}) |>
+    sjlabelled::label_to_colnames() |>
+    colnames()
 
   if (na == FALSE) {
     dt <- dt |>
@@ -103,12 +113,17 @@ knit_crosstab <- function(
       ~ sum(.x, na.rm = TRUE)
     )) |>
     dplyr::mutate(Total = !!name_row_total) |>
-    dplyr::rename({{ row_var }} := Total)
+    dplyr::rename(!!row_var_label := Total)
 
   t <- t |>
     dplyr::bind_rows(t_sum)
 
-  gt <- t |> gt::gt()
+  gt <- t |>
+    gt::gt() |>
+    gt::tab_spanner(
+      label = col_var_label, # oder dynamisch
+      columns = -1 # alle Spalten ausser der ersten
+    )
 
   if (percent) {
     gt <- gt |>

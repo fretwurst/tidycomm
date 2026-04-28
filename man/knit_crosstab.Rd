@@ -6,8 +6,8 @@
 \usage{
 knit_crosstab(
   data,
-  row_var,
   col_var,
+  row_var,
   width_pct = 80,
   weight = NULL,
   na = FALSE,
@@ -23,9 +23,9 @@ knit_crosstab(
 \arguments{
 \item{data}{a \link[tibble:tibble-package]{tibble}}
 
-\item{row_var}{the row variable.}
-
 \item{col_var}{the column variable.}
+
+\item{row_var}{the row variable.}
 
 \item{weight}{Weighting variable. Default = NULL, means all weights are 1.}
 
