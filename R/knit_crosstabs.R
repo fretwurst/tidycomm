@@ -10,15 +10,14 @@
 #' @param percent_decimal Decimal places of the percent columns. Default is 0.
 #' @param name_percent = "Prozent" Decimal places of the percent columns. Default is 0.
 #' @param name_row_total the name of the "Total" column.
-#' @param cums = FALSE Decimal places of the percent columns. Default is 0.
 #' @param na = FALSE include NA. Default is FALSE.
-#' @param chi_square = FALSE include NA. Default is FALSE.
+#' @param chi_square = TRUE include chi_square. Default is TRUE.
 #'
 #' @return a gt-table
 #'
 #' @examples
 #' WoJ |> knit_crosstab(row_var = employment, col_var = reach)
-#' WoJ |> knit_crosstab(row_var = employment, col_var = reach, num_decimal = 1, percent_decimal = 1, cums = FALSE, name_percent = "Percent")
+#' WoJ |> knit_crosstab(row_var = employment, col_var = reach, num_decimal = 1, percent_decimal = 1, name_percent = "Percent")
 #'
 #' @family categorical
 #'
@@ -35,8 +34,7 @@ knit_crosstab <- function(
   percent_decimal = 0,
   chi_square = TRUE,
   name_row_total = "Gesamt",
-  name_percent = "Prozent",
-  cums = TRUE
+  name_percent = "Prozent"
 ) {
   dt <- data |>
     dplyr::select({{ col_var }}, {{ row_var }}, tidyselect::any_of(weight)) |>
