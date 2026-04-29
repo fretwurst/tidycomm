@@ -41,7 +41,7 @@ reference:
   - title: "Visualization"
     contents:
       - visualize
-      - knit_regression
+      # - knit_regression
       - design_lmu
       - design_uzh
       - design_viridis
