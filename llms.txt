@@ -1,0 +1,241 @@
+# tidycomm
+
+Tidycomm provides convenience functions for common tasks in
+communication research. All functions follow the style and syntax of the
+[tidyverse](https://www.tidyverse.org/).
+
+Currently, tidycomm includes functions for various methods of univariate
+and bivariate data description and analysis, data modification,
+visualization, and intercoder reliability tests.
+
+## Installation
+
+Install tidycomm from CRAN:
+
+``` r
+
+install.packages("tidycomm")
+```
+
+Or install the most recent development version of tidycomm with:
+
+``` r
+
+remotes::install_github("joon-e/tidycomm")
+```
+
+## Usage
+
+``` r
+
+library(tidycomm)
+```
+
+tidycomm functions follow the style and syntax of the
+[tidyverse](https://www.tidyverse.org/) functions:
+
+- they always assume a `tibble` as their first argument
+- they will always return a `tibble` as well, so they can be easily
+  integrated into pipes
+- data variables (`tibble` columns) are passed to function calls
+  directly as symbols
+
+``` r
+
+WoJ %>% # Worlds of Journalism sample data
+  describe(autonomy_selection, autonomy_emphasis)
+#> # A tibble: 2 × 15
+#>   Variable             N Missing     M    SD   Min   Q25   Mdn   Q75   Max Range
+#> * <chr>            <int>   <int> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#> 1 autonomy_select…  1197       3  3.88 0.803     1     4     4     4     5     4
+#> 2 autonomy_emphas…  1195       5  4.08 0.793     1     4     4     5     5     4
+#> # ℹ 4 more variables: CI_95_LL <dbl>, CI_95_UL <dbl>, Skewness <dbl>,
+#> #   Kurtosis <dbl>
+```
+
+Most functions will automatically use all relevant variables in the data
+if no variables are specified in the function call. For example, to
+compute descriptive statistics for all numeric variables in the data,
+just call
+[`describe()`](https://github.com/tidycomm/tidycomm/reference/describe.md)
+without further arguments:
+
+``` r
+
+WoJ %>% 
+  describe()
+#> # A tibble: 11 × 15
+#>    Variable           N Missing     M     SD   Min   Q25   Mdn   Q75   Max Range
+#>  * <chr>          <int>   <int> <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#>  1 autonomy_sele…  1197       3  3.88  0.803     1  4        4     4     5     4
+#>  2 autonomy_emph…  1195       5  4.08  0.793     1  4        4     5     5     4
+#>  3 ethics_1        1200       0  1.63  0.892     1  1        1     2     5     4
+#>  4 ethics_2        1200       0  3.21  1.26      1  2        4     4     5     4
+#>  5 ethics_3        1200       0  2.39  1.13      1  2        2     3     5     4
+#>  6 ethics_4        1200       0  2.58  1.25      1  1.75     2     4     5     4
+#>  7 work_experien…  1187      13 17.8  10.9       1  8       17    25    53    52
+#>  8 trust_parliam…  1200       0  3.05  0.811     1  3        3     4     5     4
+#>  9 trust_governm…  1200       0  2.82  0.854     1  2        3     3     5     4
+#> 10 trust_parties   1200       0  2.42  0.736     1  2        2     3     4     3
+#> 11 trust_politic…  1200       0  2.52  0.712     1  2        3     3     4     3
+#> # ℹ 4 more variables: CI_95_LL <dbl>, CI_95_UL <dbl>, Skewness <dbl>,
+#> #   Kurtosis <dbl>
+```
+
+Likewise, compute intercoder reliability tests for all variables by only
+specifying the post and coder ID variables:
+
+``` r
+
+fbposts %>% # Facebook post codings sample data
+  test_icr(post_id, coder_id)
+#> # A tibble: 5 × 8
+#>   Variable     n_Units n_Coders n_Categories Level   Agreement Holstis_CR
+#> * <chr>          <int>    <int>        <int> <chr>       <dbl>      <dbl>
+#> 1 type              45        6            4 nominal     1          1    
+#> 2 n_pictures        45        6            7 nominal     0.822      0.930
+#> 3 pop_elite         45        6            6 nominal     0.733      0.861
+#> 4 pop_people        45        6            2 nominal     0.778      0.916
+#> 5 pop_othering      45        6            4 nominal     0.867      0.945
+#> # ℹ 1 more variable: Krippendorffs_Alpha <dbl>
+```
+
+Almost all functions also come with integrated visualizations. So to
+visualize your results you can easily just append
+[`visualize()`](https://github.com/tidycomm/tidycomm/reference/visualize.md)
+to the end of your commands:
+
+``` r
+
+snscomments %>% # experimental social-media-post perception sample data
+  dplyr::filter(group == 3) %>% 
+  t_test(gender, 
+         medium_evaluation, 
+         article_evaluation, 
+         comments_quality, 
+         comments_valence) %>% 
+  visualize()
+```
+
+![](reference/figures/README-unnamed-chunk-8-1.png)
+
+For detailed examples, see the following articles:
+
+- [Univariate analysis of continuous and categorical
+  variables](https://joon-e.github.io/tidycomm/articles/v01_univariate.html)
+- [Bivariate analysis of continuous and/or categorical
+  variables](https://joon-e.github.io/tidycomm/articles/v02_bivariate.html)
+- [Adding indices and computing reliability
+  estimates](https://joon-e.github.io/tidycomm/articles/v03_reliability.html)
+- [Intercoder reliability
+  tests](https://joon-e.github.io/tidycomm/articles/v04_icr.html)
+- [Modification of
+  scales](https://joon-e.github.io/tidycomm/articles/v05_scales.html)
+
+# Package index
+
+## Univariate analysis
+
+- [`describe()`](https://github.com/tidycomm/tidycomm/reference/describe.md)
+  : Describe numeric variables
+- [`tab_percentiles()`](https://github.com/tidycomm/tidycomm/reference/tab_percentiles.md)
+  : Tabulate percentiles for numeric variables
+- [`describe_cat()`](https://github.com/tidycomm/tidycomm/reference/describe_cat.md)
+  : Describe categorical variables
+- [`tab_frequencies()`](https://github.com/tidycomm/tidycomm/reference/tab_frequencies.md)
+  : Tabulate frequencies
+- [`knit_frequencies()`](https://github.com/tidycomm/tidycomm/reference/knit_frequencies.md)
+  : knit frequencies table variables
+
+## Bivariate analysis
+
+- [`crosstab()`](https://github.com/tidycomm/tidycomm/reference/crosstab.md)
+  : Crosstab variables
+- [`knit_crosstab()`](https://github.com/tidycomm/tidycomm/reference/knit_crosstab.md)
+  : knit crosstab table variables
+- [`t_test()`](https://github.com/tidycomm/tidycomm/reference/t_test.md)
+  : Compute t-tests
+- [`unianova()`](https://github.com/tidycomm/tidycomm/reference/unianova.md)
+  : Compute one-way ANOVAs
+- [`correlate()`](https://github.com/tidycomm/tidycomm/reference/correlate.md)
+  : Compute correlation coefficients
+- [`to_correlation_matrix()`](https://github.com/tidycomm/tidycomm/reference/to_correlation_matrix.md)
+  : Create correlation matrix
+- [`regress()`](https://github.com/tidycomm/tidycomm/reference/regress.md)
+  : Compute linear regression
+- [`knit_regress_table()`](https://github.com/tidycomm/tidycomm/reference/knit_regress_table.md)
+  : Compute linear regression
+
+## Data modification
+
+- [`add_index()`](https://github.com/tidycomm/tidycomm/reference/add_index.md)
+  : Add index
+- [`reverse_scale()`](https://github.com/tidycomm/tidycomm/reference/reverse_scale.md)
+  : Reverse numeric, logical, or date/time continuous variables
+- [`minmax_scale()`](https://github.com/tidycomm/tidycomm/reference/minmax_scale.md)
+  : Rescale numeric continuous variables to new minimum/maximum
+  boundaries
+- [`center_scale()`](https://github.com/tidycomm/tidycomm/reference/center_scale.md)
+  : Center numeric, continuous variables
+- [`z_scale()`](https://github.com/tidycomm/tidycomm/reference/z_scale.md)
+  : Z-standardize numeric, continuous variables
+- [`categorize_scale()`](https://github.com/tidycomm/tidycomm/reference/categorize_scale.md)
+  : Categorize numeric variables into categories
+- [`dummify_scale()`](https://github.com/tidycomm/tidycomm/reference/dummify_scale.md)
+  : Convert categorical variables to dummy variables
+- [`setna_scale()`](https://github.com/tidycomm/tidycomm/reference/setna_scale.md)
+  : Set specified values to NA in selected variables or entire data
+  frame
+- [`recode_cat_scale()`](https://github.com/tidycomm/tidycomm/reference/recode_cat_scale.md)
+  : Recode one or more categorical variables into new categories
+
+## Reliability tests
+
+- [`get_reliability()`](https://github.com/tidycomm/tidycomm/reference/get_reliability.md)
+  : Get reliability estimates of index variables
+
+## Intercoder reliability
+
+- [`test_icr()`](https://github.com/tidycomm/tidycomm/reference/test_icr.md)
+  : Perform an intercoder reliability test
+
+## Visualization
+
+- [`visualize()`](https://github.com/tidycomm/tidycomm/reference/visualize.md)
+  : Visualize tidycomm output
+- [`design_lmu()`](https://github.com/tidycomm/tidycomm/reference/design_lmu.md)
+  : Colorbrewer-inspired design with focus on LMU (lmu.de) green
+- [`design_uzh()`](https://github.com/tidycomm/tidycomm/reference/design_uzh.md)
+  : Colorbrewer-inspired design with focus on UZH (uzh.ch) blue
+- [`design_viridis()`](https://github.com/tidycomm/tidycomm/reference/design_viridis.md)
+  : viridis-inspired design
+- [`design_gray()`](https://github.com/tidycomm/tidycomm/reference/design_gray.md)
+  : Gray design
+- [`design_grey()`](https://github.com/tidycomm/tidycomm/reference/design_grey.md)
+  : Grey design
+
+## Sample data
+
+- [`WoJ`](https://github.com/tidycomm/tidycomm/reference/WoJ.md) :
+  Worlds of Journalism sample data
+- [`fbposts`](https://github.com/tidycomm/tidycomm/reference/fbposts.md)
+  : Facebook posts reliability test
+- [`snscomments`](https://github.com/tidycomm/tidycomm/reference/snscomments.md)
+  : SNS Comments data
+- [`incvlcomments`](https://github.com/tidycomm/tidycomm/reference/incvlcomments.md)
+  : Incivil Comments Data
+
+# Articles
+
+### All vignettes
+
+- [Univariate analysis of continuous and categorical
+  variables](https://github.com/tidycomm/tidycomm/articles/v01_univariate.md):
+- [Bivariate analysis of continuous and/or categorical
+  variables](https://github.com/tidycomm/tidycomm/articles/v02_bivariate.md):
+- [Adding indices and computing reliability
+  estimates](https://github.com/tidycomm/tidycomm/articles/v03_reliability.md):
+- [Intercoder reliability
+  tests](https://github.com/tidycomm/tidycomm/articles/v04_icr.md):
+- [Change
+  Scales](https://github.com/tidycomm/tidycomm/articles/v05_scales.md):
