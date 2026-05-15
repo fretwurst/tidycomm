@@ -16,8 +16,7 @@ knit_crosstab(
   percent_decimal = 0,
   chi_square = TRUE,
   name_row_total = "Gesamt",
-  name_percent = "Prozent",
-  cums = TRUE
+  name_percent = "Prozent"
 )
 }
 \arguments{
@@ -27,21 +26,23 @@ knit_crosstab(
 
 \item{row_var}{the row variable.}
 
+\item{width_pct}{The table width in percent. Default = 80\%.}
+
 \item{weight}{Weighting variable. Default = NULL, means all weights are 1.}
 
 \item{na}{= FALSE include NA. Default is FALSE.}
+
+\item{percent}{= TRUE. Show column percent instead of counts. Default is TRUE.}
 
 \item{num_decimal}{Decimal places of the numeric columns. Default is 0.}
 
 \item{percent_decimal}{Decimal places of the percent columns. Default is 0.}
 
-\item{chi_square}{= FALSE include NA. Default is FALSE.}
+\item{chi_square}{= TRUE include chi_square. Default is TRUE.}
 
 \item{name_row_total}{the name of the "Total" column.}
 
 \item{name_percent}{= "Prozent" Decimal places of the percent columns. Default is 0.}
-
-\item{cums}{= FALSE Decimal places of the percent columns. Default is 0.}
 }
 \value{
 a gt-table
@@ -51,7 +52,9 @@ Knits table for one ore more variables
 }
 \examples{
 WoJ |> knit_crosstab(row_var = employment, col_var = reach)
-WoJ |> knit_crosstab(row_var = employment, col_var = reach, num_decimal = 1, percent_decimal = 1, cums = FALSE, name_percent = "Percent")
+WoJ |> knit_crosstab(row_var = employment, 
+     col_var = reach, num_decimal = 1, 
+     percent_decimal = 1, name_percent = "Percent")
 
 }
 \seealso{

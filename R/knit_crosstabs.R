@@ -6,7 +6,9 @@
 #' @param col_var the column variable.
 #' @param row_var the row variable.
 #' @param weight Weighting variable. Default = NULL, means all weights are 1.
+#' @param width_pct The table width in percent. Default = 80%.
 #' @param num_decimal Decimal places of the numeric columns. Default is 0.
+#' @param percent = TRUE. Show column percent instead of counts. Default is TRUE.
 #' @param percent_decimal Decimal places of the percent columns. Default is 0.
 #' @param name_percent = "Prozent" Decimal places of the percent columns. Default is 0.
 #' @param name_row_total the name of the "Total" column.
@@ -17,7 +19,9 @@
 #'
 #' @examples
 #' WoJ |> knit_crosstab(row_var = employment, col_var = reach)
-#' WoJ |> knit_crosstab(row_var = employment, col_var = reach, num_decimal = 1, percent_decimal = 1, name_percent = "Percent")
+#' WoJ |> knit_crosstab(row_var = employment, 
+#'      col_var = reach, num_decimal = 1, 
+#'      percent_decimal = 1, name_percent = "Percent")
 #'
 #' @family categorical
 #'
@@ -145,7 +149,8 @@ knit_crosstab <- function(
     gt <- gt |>
       gt::tab_footnote(
         footnote = glue::glue(
-          "𝜒²(df={chi2$parameter}, N={n_total})={chi2$statistic  |> round(1)}, p={p_fmt}; V={V |> round(2)}"
+          # \u03C7\u00B2 is Chi-square
+          "\u03C7\u00B2(df={chi2$parameter}, N={n_total})={chi2$statistic  |> round(1)}, p={p_fmt}; V={V |> round(2)}"
         )
       )
   }

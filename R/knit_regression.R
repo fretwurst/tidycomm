@@ -10,7 +10,13 @@
 #' @param CIs show the Confidence intervals or not. Default to TRUE.
 #' @param cap Set the caption. Default is NULL, because in Quarto its better to set the tbl-cap in the chunk options
 #' @param R2adj Show R^2adj in the table footnote. Default is FALSE.
-#'
+#' @param B Name of the coefficient column.
+#' @param LL Name of the lower confidence interval column.
+#' @param UL Name of the upper confidence interval column.
+#' @param beta_LL_compare Name of the lower comparison column for beta.
+#' @param beta_UL_compare Name of the upper comparison column for beta.
+#' @param beta_LL Name of the lower beta confidence interval column.
+#' @param beta_UL Name of the upper beta confidence interval column.
 #' @return a gt-table
 #'
 #' @examples
@@ -72,13 +78,12 @@ knit_regress_table <- function(x,
     round(3)  %>%
     gsub("0\\.","\\.", .)
 
-if(model$df.residual < 100 | R2adj == TRUE) {
-
+if (model$df.residual < 100 | R2adj == TRUE) {
   R_squared_adj <- model_summary$adj.r.squared |>
     round(3) %>%
-    gsub("0\\.","\\.", .) 
-  
-  R_squared <- glue::glue("{R_squared}, R²adj = {R_squared_adj}") 
+    gsub("0\\.", "\\.", .)
+
+  R_squared <- glue::glue("{R_squared}, R\u00B2adj = {R_squared_adj}")
 }
 
   F <- model_summary$fstatistic[['value']] |>

@@ -20,7 +20,6 @@
 #'   need to be numeric
 #' @param check_homoscedasticity if set, homoscedasticity is being checked
 #'   using a Breusch-Pagan test
-#' @param formula if exist, the lm-formula is used
 #'
 #' @return a [tdcmm] model
 #'

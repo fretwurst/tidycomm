@@ -4,6 +4,7 @@
 #'
 #' @param data a [tibble][tibble::tibble-package]
 #' @param weight Weighting variable. Default = NULL, means all weights are 1.
+#' @param width_pct The table width in percent. Default = 80.
 #' @param ... List of variables.
 #' @param num_decimal Decimal places of the numeric columns. Default is 0.
 #' @param percent_decimal Decimal places of the percent columns. Default is 0.
@@ -19,7 +20,9 @@
 #'
 #' @examples
 #' WoJ |> knit_frequencies(reach, employment)
-#' mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE, name_total_percent = "Percent")
+#' mtcars |> knit_frequencies(mpg, num_decimal = 1, 
+#'   percent_decimal = 1, cums = FALSE, 
+#'   name_total_percent = "Percent")
 #'
 #' @family categorical
 #'

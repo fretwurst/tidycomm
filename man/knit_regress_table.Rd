@@ -29,6 +29,20 @@ knit_regress_table(
 \item{CIs}{show the Confidence intervals or not. Default to TRUE.}
 
 \item{cap}{Set the caption. Default is NULL, because in Quarto its better to set the tbl-cap in the chunk options}
+
+\item{B}{Name of the coefficient column.}
+
+\item{LL}{Name of the lower confidence interval column.}
+
+\item{UL}{Name of the upper confidence interval column.}
+
+\item{beta_LL_compare}{Name of the lower comparison column for beta.}
+
+\item{beta_UL_compare}{Name of the upper comparison column for beta.}
+
+\item{beta_LL}{Name of the lower beta confidence interval column.}
+
+\item{beta_UL}{Name of the upper beta confidence interval column.}
 }
 \value{
 a gt-table

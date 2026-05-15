@@ -25,6 +25,8 @@ knit_frequencies(
 
 \item{...}{List of variables.}
 
+\item{width_pct}{The table width in percent. Default = 80.}
+
 \item{weight}{Weighting variable. Default = NULL, means all weights are 1.}
 
 \item{num_decimal}{Decimal places of the numeric columns. Default is 0.}
@@ -53,7 +55,9 @@ Knits table for one ore more variables
 }
 \examples{
 WoJ |> knit_frequencies(reach, employment)
-mtcars |> knit_frequencies(mpg, num_decimal = 1, percent_decimal = 1, cums = FALSE, name_total_percent = "Percent")
+mtcars |> knit_frequencies(mpg, num_decimal = 1, 
+  percent_decimal = 1, cums = FALSE, 
+  name_total_percent = "Percent")
 
 }
 \seealso{
