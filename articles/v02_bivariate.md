@@ -342,9 +342,9 @@ WoJ %>%
 #> 1 autonomy_sel… employme… Full-ti… -0.0780     -0.225     0.0688 0.422   -0.110 
 #> 2 autonomy_sel… employme… Full-ti… -0.139      -0.329     0.0512 0.199   -0.155 
 #> 3 autonomy_sel… employme… Part-ti… -0.0607     -0.284     0.163  0.798   -0.0729
-#> 4 autonomy_emp… employme… Full-ti… -0.102      -0.278     0.0741 0.362   -0.133 
-#> 5 autonomy_emp… employme… Full-ti… -0.217      -0.372    -0.0629 0.00284 -0.266 
-#> 6 autonomy_emp… employme… Part-ti… -0.115      -0.333     0.102  0.428   -0.143 
+#> 4 autonomy_emp… employme… Full-ti… -0.102      -0.278     0.0741 0.362   -0.131 
+#> 5 autonomy_emp… employme… Full-ti… -0.217      -0.372    -0.0629 0.00284 -0.274 
+#> 6 autonomy_emp… employme… Part-ti… -0.115      -0.333     0.102  0.428   -0.142 
 #> # ℹ 3 more variables: se <dbl>, t <dbl>, df <dbl>
 ```
 
