@@ -137,6 +137,62 @@ visualize_tab_percentiles <- function(x, design = design_lmu()) {
     design$theme()
 }
 
+# Formatting S3 Method for Percentiles ----
+
+#' Format percentiles results as a table
+#'
+#' @param x a `tdcmm_prcntl` model
+#' @param digits the decimal digits. Default is 2.
+#' @param var_names Optional named character vector to rename variables in the table (e.g., `c("old_name" = "New Name")`).
+#' @param ... further arguments passed to or from other methods.
+#'
+#' @rdname format_table
+#'
+#' @examples
+#' \dontrun{
+#' WoJ %>%
+#'   tab_percentiles(work_experience) %>%
+#'   format_table()
+#'
+#' WoJ %>%
+#'   tab_percentiles(work_experience) %>%
+#'   format_table(
+#'     var_names = c("work_experience" = "Berufserfahrung (Jahre)"),
+#'     digits = 1
+#'   )
+#' }
+#'
+#' @export
+format_table.tdcmm_prcntl <- function(x, digits = 2, var_names = NULL, ...) {
+
+  model_tibble <- x
+
+  # --- Variablen umbenennen ---
+  if (!is.null(var_names)) {
+    model_tibble <- model_tibble %>%
+      dplyr::mutate(Variable = dplyr::coalesce(unname(var_names[Variable]), Variable))
+  }
+
+  # --- gt-Tabelle aufbauen ---
+  tab_knit <- model_tibble %>%
+    gt::gt() %>%
+    gt::fmt_number(
+      columns = -Variable, # Alle Spalten außer "Variable"
+      decimals = digits
+    ) %>%
+    gt::cols_align(align = "right", columns = -Variable) %>%
+    gt::tab_options(table.width = gt::pct(85))
+
+  # Output Handling
+  if (knitr::is_html_output() || knitr::is_latex_output() || interactive()) {
+    return(tab_knit)
+  } else if (knitr::pandoc_to("docx")) {
+    return(gt::as_raw_html(tab_knit))
+  } else {
+    return(x)
+  }
+}
+
 # Internal helper function ----
 #' @keywords internal
 percent_format <- function() {

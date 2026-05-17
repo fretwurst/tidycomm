@@ -102,6 +102,78 @@ model.tdcmm <- function(x, ...) {
   if (length(model) == 1) model[[1]] else model
 }
 
+#' Format tidycomm output as a table
+#'
+#' Takes a `tdcmm` object and formats it into a presentation-ready table
+#' using the `{gt}` package. Currently, table formatting is implemented for
+#' the following functions:
+#'
+#' - [regress()]: Formats the linear regression output, including standardized betas
+#'   and confidence intervals. You can use the `dv_name` and `iv_names` arguments
+#'   to provide clean labels for the dependent and independent variables.
+#' - [crosstab()]: Formats a contingency table. You can use the `dv_name` (row)
+#'   and `iv_name` (column) arguments to cleanly label the variables. If `chi_square = TRUE`
+#'   was used in `crosstab()`, the test statistics will be appended as a footnote.
+#' - [tab_frequencies()]: Formats a simple frequency table. You can rename the
+#'   target variables via `var_names` and customize the statistical column names
+#'   (e.g., `name_n = "Anzahl"`, `name_percent = "Prozent"`).
+#' - [tab_percentiles()]: Formats a table of percentiles. You can use the `var_names`
+#'   argument to rename the numeric variables in the output.
+#'
+#' @param x `tdcmm` output
+#' @param ... other arguments passed to specific methods
+#'
+#' @returns A `gt` table object, raw HTML, or the original object depending on the context.
+#'
+#' @examples
+#' \dontrun{
+#' # Formatting a regression table
+#' WoJ %>%
+#'   regress(autonomy_selection, work_experience, trust_government) %>%
+#'   format_table(
+#'     dv_name = "Autonomieauswahl der Journalisten",
+#'     iv_names = c(
+#'       "work_experience" = "Berufserfahrung (Jahre)",
+#'       "trust_government" = "Regierungsvertrauen",
+#'       "(Intercept)" = "Konstante"
+#'     )
+#'   )
+#'
+#' # Formatting a crosstab
+#' WoJ %>%
+#'   crosstab(reach, employment, add_total = TRUE, percentages = TRUE, chi_square = TRUE) %>%
+#'   format_table(
+#'     dv_name = "Anstellungsverhältnis",
+#'     iv_name = "Reichweite des Mediums"
+#'   )
+#'
+#' # Formatting frequencies with German labels
+#' WoJ %>%
+#'   tab_frequencies(employment) %>%
+#'   format_table(
+#'     var_names = c("employment" = "Anstellungsverhältnis"),
+#'     name_n = "Anzahl",
+#'     name_percent = "Prozent",
+#'     name_cum_n = "Kum. Anzahl",
+#'     name_cum_percent = "Kum. Prozent",
+#'     name_row_total = "Gesamt"
+#'   )
+#' }
+#'
+#' @export
+#' @keywords internal
+format_table <- function(x, ...) {
+  UseMethod("format_table")
+}
+
+#' @export
+format_table.tdcmm <- function(x, ...) {
+  warning(glue::glue("No table formatting has been implemented yet for objects of class {class(x)[1]}."),
+          call. = FALSE)
+  return(x)
+}
+
+
 #' Visualize tidycomm output
 #'
 #' Returns [ggplot][ggplot2::ggplot] visualization appropriate to respective `tdcmm` model
@@ -176,6 +248,9 @@ model.tdcmm <- function(x, ...) {
 #'   note that 5 is arbitrary here, meaning that they might not be too far off
 #'   or there might be more than 5 noteworthy outliers in this model; interpret
 #'   with care
+#'   - "sbci": plots "swimming beta" coefficients showing standardized betas
+#'   alongside their 95% and 90% confidence intervals; useful to easily compare
+#'   effect sizes and visualize their significance against zero
 #'
 #' Note that the returned [ggplot][ggplot2::ggplot] object can be modified easily by appending
 #' or overwriting individual geom's or scale's. See the examples below and the
@@ -259,6 +334,7 @@ model.tdcmm <- function(x, ...) {
 #' r %>% visualize("qq")
 #' r %>% visualize("scaloc")
 #' r %>% visualize("reslev")
+#' r %>% visualize("sbci")
 #'
 #' # To overwrite a certain scale or geom, just append as you would with ggplot2
 #' fbposts %>%
