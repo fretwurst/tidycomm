@@ -206,36 +206,30 @@ visualize.tdcmm_rgrssn <- function(
   .design = NULL,
   title = NULL
 ) {
-  if (!is.null(.design)) {
-    .design <- .design
-  } else if (!is.null(getOption("design"))) {
-    .design <- getOption("design")
-  } else {
-    .design <- tidycomm::design_lmu()
-  }
+  design <- resolve_tidycomm_design(.design)
 
   if (attr(x, "func") == "regress") {
     which <- tolower(which)
     if (which == "correlogram") {
-      return(visualize_regress_correlogram(x, .design))
+      return(visualize_regress_correlogram(x, design))
     }
     if (which == "residualsfitted" | which == "resfit") {
-      return(visualize_regress_resfit(x, .design))
+      return(visualize_regress_resfit(x, design))
     }
     if (which == "pp") {
-      return(visualize_regress_pp(x, .design))
+      return(visualize_regress_pp(x, design))
     }
     if (which == "sbci") {
-      return(visualize_regress_sbci(x, .design, title = title))
+      return(visualize_regress_sbci(x, design, subtitle = title))
     }
     if (which == "qq") {
-      return(visualize_regress_qq(x, .design))
+      return(visualize_regress_qq(x, design))
     }
     if (which == "scalelocation" | which == "scaloc") {
-      return(visualize_regress_scaloc(x, .design))
+      return(visualize_regress_scaloc(x, design))
     }
     if (which == "residualsleverage" | which == "reslev") {
-      return(visualize_regress_reslev(x, .design))
+      return(visualize_regress_reslev(x, design))
     }
     if (!which %in% c("jitter", "alpha")) {
       warning(
@@ -251,7 +245,7 @@ visualize.tdcmm_rgrssn <- function(
       )
       which <- "jitter"
     }
-    return(visualize_regress_lm(x, which, .design))
+    return(visualize_regress_lm(x, which, design))
   }
 
   return(warn_about_missing_visualization(x))
@@ -342,7 +336,7 @@ tbl_format_footer.tdcmm_rgrssn <- function(x, ...) {
 ## @family tdcmm visualize
 #
 ## @keywords internal
-visualize_regress_lm <- function(x, which = "jitter", design = design_lmu()) {
+visualize_regress_lm <- function(x, which = "jitter", design) {
   g <- attr(x, "data") %>%
     dplyr::select(
       !!sym(attr(x, "params")$dependent_var),
@@ -391,7 +385,7 @@ visualize_regress_lm <- function(x, which = "jitter", design = design_lmu()) {
 ## @see visualize.tdcmm_crrltn
 #
 ## @keywords internal
-visualize_regress_correlogram <- function(x, design = design_lmu()) {
+visualize_regress_correlogram <- function(x, design) {
   if (length(attr(x, "checks")$factors) > 0) {
     factor_variables <- c()
     for (i in 1:length(attr(x, "checks")$factors)) {
@@ -428,7 +422,7 @@ visualize_regress_correlogram <- function(x, design = design_lmu()) {
 ## @family tdcmm visualize
 ##
 ## @keywords internal
-visualize_regress_resfit <- function(x, design = design_lmu()) {
+visualize_regress_resfit <- function(x, design) {
   m <- model(x)
   mf <- ggplot2::fortify(m)
   lowess_fit <- dplyr::as_tibble(stats::lowess(x = mf$.fitted, y = mf$.resid))
@@ -462,7 +456,7 @@ visualize_regress_resfit <- function(x, design = design_lmu()) {
 ## @family tdcmm visualize
 #
 ## @keywords internal
-visualize_regress_pp <- function(x, design = design_lmu()) {
+visualize_regress_pp <- function(x, design) {
   x %>%
     model() %>%
     ggplot2::fortify() %>%
@@ -502,7 +496,7 @@ visualize_regress_pp <- function(x, design = design_lmu()) {
 ## @family tdcmm visualize
 #
 ## @keywords internal
-visualize_regress_qq <- function(x, design = design_lmu()) {
+visualize_regress_qq <- function(x, design) {
   x %>%
     model() %>%
     ggplot2::ggplot(ggplot2::aes(sample = .data$.stdresid)) +
@@ -526,7 +520,7 @@ visualize_regress_qq <- function(x, design = design_lmu()) {
 ## @family tdcmm visualize
 ##
 ## @keywords internal
-visualize_regress_scaloc <- function(x, design = design_lmu()) {
+visualize_regress_scaloc <- function(x, design) {
   x %>%
     model() %>%
     ggplot2::ggplot(ggplot2::aes(
@@ -559,10 +553,10 @@ visualize_regress_scaloc <- function(x, design = design_lmu()) {
 ## @family tdcmm visualize
 ##
 ## @keywords internal
-visualize_regress_reslev <- function(x, design = design_lmu()) {
+visualize_regress_reslev <- function(x, design) {
   data_labels <- x %>%
     model() %>%
-    ggplot2::fortify() %>%
+    broom::augment() %>%
     dplyr::as_tibble() %>%
     tibble::rownames_to_column(var = "case_number") %>%
     dplyr::slice_max(.data$.cooksd, n = 5)
@@ -594,24 +588,16 @@ visualize_regress_reslev <- function(x, design = design_lmu()) {
 ##
 ## @param x a [tdcmm] model
 ## @param .design design settings
-## @param title character string for the plot title
+## @param subtitle character string for the plot title
 ##
 ## @return a [ggplot2] object
 ##
 ## @family tdcmm visualize
 #
 ## @keywords internal
-visualize_regress_sbci <- function(x, .design = NULL, title = NULL) {
-  if (!is.null(.design)) {
-    design <- .design
-  } else if (!is.null(getOption("design"))) {
-    design <- getOption("design")
-  } else {
-    design <- tidycomm::design_lmu()
-  }
-
-  if (is.null(title)) {
-    title <- "Beta Coefficients with Confidence Intervals"
+visualize_regress_sbci <- function(x, design, subtitle = NULL) {
+  if (is.null(subtitle)) {
+    subtitle <- "Beta Coefficients with Confidence Intervals"
   }
 
   m <- model(x)
@@ -667,8 +653,7 @@ visualize_regress_sbci <- function(x, .design = NULL, title = NULL) {
         yend = .data$Variable,
         color = "CIs for BETA comparison"
       ),
-      linewidth = 4,
-      alpha = 0.3
+      linewidth = 4
     ) +
     ggplot2::geom_segment(
       ggplot2::aes(
@@ -678,8 +663,7 @@ visualize_regress_sbci <- function(x, .design = NULL, title = NULL) {
         yend = .data$Variable,
         color = "CIs for point comparison"
       ),
-      linewidth = 0.9,
-      alpha = 1.0
+      linewidth = 0.9
     ) +
     ggplot2::geom_vline(
       xintercept = 0,
@@ -694,16 +678,16 @@ visualize_regress_sbci <- function(x, .design = NULL, title = NULL) {
       alpha = 1.0
     ) +
     ggplot2::labs(
-      title = title,
+      subtitle = subtitle,
       x = "Beta",
       y = NULL,
       color = "Legend"
     ) +
     ggplot2::scale_color_manual(
       values = c(
-        "Beta-Value" = design$main_colors[8],
-        "CIs for BETA comparison" = design$main_color_1,
-        "CIs for point comparison" = design$main_colors[6]
+        "Beta-Value" = design$main_color_1,
+        "CIs for point comparison" = alpha(design$main_color_1, .4),
+        "CIs for BETA comparison" = alpha(design$main_color_1, .2)
       )
     ) +
     design$theme() +
