@@ -1,0 +1,22 @@
+{
+    "recommendations": [
+        "mygnet.vscode-anemona-task", //man kann schön die Randleiste farblich ändern
+        "mblode.zotero",
+        "repreng.csv",
+        "mhutchie.git-graph",
+        "github.vscode-pull-request-github",
+        "kisstkondoros.vscode-gutter-preview",
+        "yandeu.five-server", // guter Browser, der auch live und mit js gut geht
+        "ms-vsliveshare.vsliveshare", // eine Zeit lang ging nur eine alte Version. Können wir mal ausprobieren. 
+        "yunierolivera.markdown-quarto-word-count",
+        "yzhang.markdown-all-in-one",
+        "takumii.markdowntable",
+        "cweijan.vscode-office",
+        "yutengjing.open-in-external-app",
+        "garlicbreadcleric.pandoc-markdown-syntax",
+        "mushan.vscode-paste-image",
+        "christian-kohler.path-intellisense", // sehr praktisch für Pfaderweiterweiterung
+        "quarto.quarto",
+        "yurish.size",
+        "wayou.vscode-todo-highlight" // wichtigste Extension! Highlighted TODOs, FIXMEs
+    ]
